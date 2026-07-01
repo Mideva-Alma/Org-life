@@ -155,6 +155,17 @@
   color: #c44a3a;
 }
 
+/* ===== PAGE PLACEHOLDER ===== */
+.page-placeholder {
+  padding: 40px;
+  text-align: center;
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  color: #4a5a6a;
+}
+
 /* Main Content */
 .main-content {
   flex: 1;
