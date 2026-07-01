@@ -4,7 +4,6 @@ exports.createExpense = async (req, res) => {
     try {
         const { amount, category, description, expense_date } = req.body;
 
-        // Validate
         if (!amount || !category) {
             return res.status(400).json({ 
                 error: 'Amount and category are required' 
@@ -18,7 +17,7 @@ exports.createExpense = async (req, res) => {
         }
 
         const expenseId = await Expense.create({
-            user_id: req.user.id,
+            budgeter_id: req.user.id,
             amount,
             category,
             description,
@@ -37,11 +36,11 @@ exports.getExpenses = async (req, res) => {
     try {
         const { category, startDate, endDate, limit } = req.query;
         
-        const expenses = await Expense.findByUserId(req.user.id, {
+        const expenses = await Expense.findByBudgeterId(req.user.id, {
             category,
             startDate,
             endDate,
-            limit: limit ? parseInt(limit) : null
+            limit: limit ? parseInt(limit) : 10
         });
         
         res.json(expenses);

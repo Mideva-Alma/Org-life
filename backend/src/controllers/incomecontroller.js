@@ -4,7 +4,6 @@ exports.createIncome = async (req, res) => {
     try {
         const { amount, source, description, income_date } = req.body;
 
-        // Validate
         if (!amount || !source) {
             return res.status(400).json({ 
                 error: 'Amount and source are required' 
@@ -18,7 +17,7 @@ exports.createIncome = async (req, res) => {
         }
 
         const incomeId = await Income.create({
-            user_id: req.user.id,
+            budgeter_id: req.user.id,
             amount,
             source,
             description,
@@ -37,10 +36,10 @@ exports.getIncomes = async (req, res) => {
     try {
         const { startDate, endDate, limit } = req.query;
         
-        const incomes = await Income.findByUserId(req.user.id, {
+        const incomes = await Income.findByBudgeterId(req.user.id, {
             startDate,
             endDate,
-            limit: limit ? parseInt(limit) : null
+            limit: limit ? parseInt(limit) : 10
         });
         
         res.json(incomes);

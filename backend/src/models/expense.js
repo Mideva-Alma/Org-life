@@ -1,21 +1,20 @@
 const { pool } = require('../config/database');
 
 class Expense {
-    static async create({ user_id, amount, category, description, expense_date }) {
-        // Set default date to today if not provided
+    static async create({ budgeter_id, amount, category, description, expense_date }) {
         const date = expense_date || new Date().toISOString().split('T')[0];
         
         const [result] = await pool.execute(
-            `INSERT INTO expenses (user_id, amount, category, description, expense_date) 
+            `INSERT INTO expenses (budgeter_id, amount, category, description, expense_date) 
              VALUES (?, ?, ?, ?, ?)`,
-            [user_id, amount, category, description, date]
+            [budgeter_id, amount, category, description, date]
         );
         return result.insertId;
     }
 
-    static async findByUserId(userId, options = {}) {
-        let query = 'SELECT * FROM expenses WHERE user_id = ?';
-        const params = [userId];
+    static async findByBudgeterId(budgeterId, options = {}) {
+        let query = 'SELECT * FROM expenses WHERE budgeter_id = ?';
+        const params = [budgeterId];
 
         if (options.category) {
             query += ' AND category = ?';
@@ -34,24 +33,24 @@ class Expense {
 
         query += ' ORDER BY expense_date DESC, created_at DESC';
         
+        // Fix: Add LIMIT directly to query string if provided
         if (options.limit) {
-            query += ' LIMIT ?';
-            params.push(options.limit);
+            query += ` LIMIT ${parseInt(options.limit)}`;
         }
 
         const [rows] = await pool.execute(query, params);
         return rows;
     }
 
-    static async findById(id, userId) {
+    static async findById(id, budgeterId) {
         const [rows] = await pool.execute(
-            'SELECT * FROM expenses WHERE id = ? AND user_id = ?',
-            [id, userId]
+            'SELECT * FROM expenses WHERE id = ? AND budgeter_id = ?',
+            [id, budgeterId]
         );
         return rows[0];
     }
 
-    static async update(id, userId, data) {
+    static async update(id, budgeterId, data) {
         const fields = [];
         const values = [];
 
@@ -75,24 +74,24 @@ class Expense {
         if (fields.length === 0) return null;
 
         values.push(id);
-        values.push(userId);
+        values.push(budgeterId);
         const [result] = await pool.execute(
-            `UPDATE expenses SET ${fields.join(', ')} WHERE id = ? AND user_id = ?`,
+            `UPDATE expenses SET ${fields.join(', ')} WHERE id = ? AND budgeter_id = ?`,
             values
         );
         
         return result.affectedRows > 0;
     }
 
-    static async delete(id, userId) {
+    static async delete(id, budgeterId) {
         const [result] = await pool.execute(
-            'DELETE FROM expenses WHERE id = ? AND user_id = ?',
-            [id, userId]
+            'DELETE FROM expenses WHERE id = ? AND budgeter_id = ?',
+            [id, budgeterId]
         );
         return result.affectedRows > 0;
     }
 
-    static async getSummary(userId, month) {
+    static async getSummary(budgeterId, month) {
         const [rows] = await pool.execute(
             `SELECT 
                 category,
@@ -100,10 +99,10 @@ class Expense {
                 SUM(amount) as total_amount,
                 AVG(amount) as avg_amount
              FROM expenses 
-             WHERE user_id = ? AND DATE_FORMAT(expense_date, '%Y-%m') = ?
+             WHERE budgeter_id = ? AND DATE_FORMAT(expense_date, '%Y-%m') = ?
              GROUP BY category
              ORDER BY total_amount DESC`,
-            [userId, month]
+            [budgeterId, month]
         );
         return rows;
     }
