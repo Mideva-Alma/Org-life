@@ -1,0 +1,428 @@
+/* ===== EXPENSES PAGE ===== */
+.expenses-page {
+  padding: 20px 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: 'Courier New', 'Times New Roman', serif;
+}
+
+/* Loading */
+.expenses-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f5f0eb;
+  color: #1a2a3a;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #d4c8bc;
+  border-top-color: #1a2a3a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.expenses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.expenses-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 28px;
+  color: #1a2a3a;
+  margin-bottom: 4px;
+}
+
+.expenses-subtitle {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #4a5a6a;
+}
+
+.add-expense-btn {
+  padding: 10px 24px;
+  background: #1a2a3a;
+  color: #f5f0eb;
+  border: 2px solid #1a2a3a;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.add-expense-btn:hover {
+  background: #2a4a6a;
+  border-color: #2a4a6a;
+}
+
+/* Stats */
+.expenses-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #fcf8f4;
+  border: 2px solid #d4c8bc;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-family: 'Times New Roman', serif;
+  font-size: 22px;
+  font-weight: bold;
+  color: #1a2a3a;
+  margin-top: 4px;
+}
+
+.stat-card.categorized .stat-value {
+  color: #2a6a4a;
+}
+
+.stat-card.uncategorized .stat-value {
+  color: #c44a3a;
+}
+
+.stat-card.count .stat-value {
+  color: #2a4a6a;
+}
+
+/* Add Expense Form */
+.add-expense-form {
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  box-shadow: 4px 4px 0 rgba(26, 42, 58, 0.1);
+}
+
+.add-expense-form h3 {
+  font-family: 'Times New Roman', serif;
+  font-size: 20px;
+  color: #1a2a3a;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.cancel-btn {
+  padding: 8px 20px;
+  background: none;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+.save-btn {
+  padding: 8px 24px;
+  background: #2a6a4a;
+  color: #f5f0eb;
+  border: 2px solid #2a6a4a;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-btn:hover {
+  background: #1a4a3a;
+  border-color: #1a4a3a;
+}
+
+/* Filters */
+.expenses-filters {
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 6px 16px;
+  background: none;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.filter-btn:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+.filter-btn.active {
+  background: #1a2a3a;
+  border-color: #1a2a3a;
+  color: #f5f0eb;
+}
+
+/* Expenses List */
+.expenses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.expense-item {
+  background: #fcf8f4;
+  border: 2px solid #d4c8bc;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.3s;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.expense-item:hover {
+  border-color: #1a2a3a;
+}
+
+.expense-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.expense-amount {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1a2a3a;
+  min-width: 100px;
+}
+
+.expense-desc {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #4a5a6a;
+}
+
+.expense-date {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #8a9aaa;
+}
+
+.expense-category-badge {
+  padding: 2px 10px;
+  background: #e8e0d8;
+  border: 1px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #1a2a3a;
+}
+
+.expense-category-badge.uncategorized-badge {
+  background: #fcf0ec;
+  border-color: #c44a3a;
+  color: #c44a3a;
+}
+
+.expense-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.categorize-select {
+  padding: 4px 10px;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+  cursor: pointer;
+}
+
+.categorize-select:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.delete-btn {
+  background: none;
+  border: 2px solid #d4c8bc;
+  padding: 4px 10px;
+  font-size: 14px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.delete-btn:hover {
+  border-color: #c44a3a;
+  color: #c44a3a;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  border: 2px dashed #d4c8bc;
+  background: #f5f0eb;
+}
+
+.empty-state p {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #4a5a6a;
+  margin: 4px 0;
+}
+
+.empty-hint {
+  font-size: 13px !important;
+  color: #8a9aaa !important;
+}
+
+/* Uncategorized Summary */
+.uncategorized-summary {
+  background: #fcf8f4;
+  border: 2px solid #c44a3a;
+  padding: 16px 20px;
+  margin-top: 8px;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #1a2a3a;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.summary-amount {
+  font-weight: bold;
+  color: #c44a3a;
+}
+
+.summary-hint {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  margin-top: 4px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .expenses-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .expenses-header {
+    flex-direction: column;
+  }
+
+  .add-expense-btn {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .expense-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .expense-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .expense-actions {
+    justify-content: flex-start;
+    margin-top: 6px;
+  }
+
+  .filter-group {
+    justify-content: center;
+  }
+}

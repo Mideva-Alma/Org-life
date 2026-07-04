@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Home from "./Home";
 import DashboardTour from "../components/DashboardTour";
+import Expenses from "../pages/Expenses";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -54,7 +55,7 @@ export default function Dashboard() {
       case 'home':
         return <Home />;
       case 'expenses':
-        return <div className="page-placeholder">Expenses Page (Coming Soon)</div>;
+        return <Expenses />;
       case 'income':
         return <div className="page-placeholder">Income Page (Coming Soon)</div>;
       default:

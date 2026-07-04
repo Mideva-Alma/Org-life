@@ -123,7 +123,77 @@ const api = {
 
     getIncomeSummary(month) {
         return this.request(`/income/summary?month=${month}`);
-    }
+    },
+
+    // ============ TRANSACTION ENDPOINTS ============
+    addExpense(data) {
+    return this.request('/transactions/expense', {
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+},
+
+addIncome(data) {
+    return this.request('/transactions/income', {
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+},
+
+getTransactions(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return this.request(`/transactions${query ? '?' + query : ''}`);
+},
+
+getExpenses(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return this.request(`/transactions/expenses${query ? '?' + query : ''}`);
+},
+
+getIncome(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return this.request(`/transactions/income${query ? '?' + query : ''}`);
+},
+
+getUncategorized() {
+    return this.request('/transactions/uncategorized');
+},
+
+categorizeTransaction(id, category) {
+    return this.request(`/transactions/${id}/categorize`, {
+        method: 'PUT',
+        body: JSON.stringify({ category })
+    });
+},
+
+getTransaction(id) {
+    return this.request(`/transactions/${id}`);
+},
+
+updateTransaction(id, data) {
+    return this.request(`/transactions/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    });
+},
+
+deleteTransaction(id) {
+    return this.request(`/transactions/${id}`, {
+        method: 'DELETE'
+    });
+},
+
+getCategorySummary(month) {
+    return this.request(`/transactions/summary/categories?month=${month}`);
+},
+
+getDailySpending(startDate, endDate) {
+    return this.request(`/transactions/summary/daily?startDate=${startDate}&endDate=${endDate}`);
+},
+
+getMonthlySummary(month) {
+    return this.request(`/transactions/summary/monthly?month=${month}`);
+}
 };
 
 export default api;

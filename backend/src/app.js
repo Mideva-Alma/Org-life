@@ -8,6 +8,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const incomeRoutes = require('./routes/incomeRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/income', incomeRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
