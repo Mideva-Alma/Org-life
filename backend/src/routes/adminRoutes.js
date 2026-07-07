@@ -14,5 +14,7 @@ router.get('/users', adminController.getAllUsers);
 router.get('/users/:id', adminController.getUserById);
 router.put('/users/:id/status', adminController.toggleUserStatus);
 router.delete('/users/:id', adminController.deleteUser);
+router.get('/transactions', adminController.getAllTransactions);
+router.delete('/transactions/:sourceTable/:id', adminController.deleteTransaction);
 
 module.exports = router;

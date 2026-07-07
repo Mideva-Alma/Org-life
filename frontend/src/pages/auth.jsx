@@ -99,6 +99,7 @@ async function signUp() {
 
       localStorage.setItem('token', response.token);
       localStorage.setItem('role', response.budgeter.role);
+      localStorage.setItem('email', response.budgeter.email);
       navigate(response.budgeter.role === 'admin' ? '/admin' : '/dashboard');
     } catch (error) {
       setError(error.message);

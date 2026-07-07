@@ -198,7 +198,19 @@ getDailySpending(startDate, endDate) {
 
 getMonthlySummary(month) {
     return this.request(`/transactions/summary/monthly?month=${month}`);
-}
+},
+
+// ============ ADMIN: TRANSACTION MANAGEMENT ============
+    getAllTransactionsAdmin(params = {}) {
+        const query = new URLSearchParams(params).toString();
+        return this.request(`/admin/transactions${query ? '?' + query : ''}`);
+    },
+
+    deleteTransactionAdmin(sourceTable, id) {
+        return this.request(`/admin/transactions/${sourceTable}/${id}`, {
+            method: 'DELETE'
+        });
+    }
 };
 
 export default api;

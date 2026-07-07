@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import api from "../services/api";
+import AdminLayout from "../components/AdminLayout";
+import "./admin.css";
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -24,9 +26,7 @@ export default function AdminDashboard() {
     }
   }, [search, page]);
 
-  useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
+  useEffect(() => { loadUsers(); }, [loadUsers]);
 
   async function handleToggleStatus(user) {
     try {
@@ -38,9 +38,7 @@ export default function AdminDashboard() {
   }
 
   async function handleDelete(user) {
-    if (!window.confirm(`Delete ${user.full_name}? This will permanently delete all their transactions, expenses, and income records. This cannot be undone.`)) {
-      return;
-    }
+    if (!window.confirm(`Delete ${user.full_name}? This will permanently delete all their transactions, expenses, and income records. This cannot be undone.`)) return;
     try {
       await api.deleteUser(user.id);
       loadUsers();
@@ -50,54 +48,62 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <h2>User Management</h2>
-
-      <input
-        placeholder="Search by name, email, or phone"
-        value={search}
-        onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-      />
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {loading ? <p>Loading...</p> : (
-        <table border="1" cellPadding="8">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Registered</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(user => (
-              <tr key={user.id}>
-                <td>{user.full_name}</td>
-                <td>{user.email}</td>
-                <td>{user.phone_number}</td>
-                <td>{new Date(user.created_at).toLocaleDateString()}</td>
-                <td>{user.is_active ? 'Active' : 'Deactivated'}</td>
-                <td>
-                  <button onClick={() => handleToggleStatus(user)}>
-                    {user.is_active ? 'Deactivate' : 'Activate'}
-                  </button>
-                  <button onClick={() => handleDelete(user)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      <div>
-        <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>Previous</button>
-        <span> Page {page} of {Math.ceil(total / limit) || 1} </span>
-        <button disabled={page * limit >= total} onClick={() => setPage(p => p + 1)}>Next</button>
+    <AdminLayout title="User Management" subtitle="View, search, and manage registered users">
+      <div className="filter-bar">
+        <input
+          className="filter-input"
+          placeholder="Search by name, email, or phone"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+        />
       </div>
-    </div>
+
+      {error && <p className="status-badge inactive">{error}</p>}
+
+      <div className="admin-table-wrap">
+        {loading ? (
+          <p style={{ padding: 20 }}>Loading...</p>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Phone</th>
+                <th>Registered</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(user => (
+                <tr key={user.id}>
+                  <td>{user.full_name}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phone_number}</td>
+                  <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                  <td>
+                    <span className={`status-badge ${user.is_active ? 'active' : 'inactive'}`}>
+                      {user.is_active ? 'Active' : 'Deactivated'}
+                    </span>
+                  </td>
+                  <td>
+                    <button className="btn-small" onClick={() => handleToggleStatus(user)}>
+                      {user.is_active ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button className="btn-small danger" onClick={() => handleDelete(user)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+              {users.length === 0 && (
+                <tr><td colSpan={6} className="empty-state">No users found</td></tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div className="pagination-bar">
+        <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Previous</button>
+        <span>Page {page} of {Math.ceil(total / limit) || 1}</span>
+        <button disabled={page * limit >= total} onClick={() => setPage(p => p + 1)}>Next →</button>
+      </div>
+    </AdminLayout>
   );
 }

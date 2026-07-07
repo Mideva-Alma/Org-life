@@ -4,6 +4,7 @@ import Auth from "./pages/auth";
 import Dashboard from "./pages/dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminTransactions from "./pages/AdminTransactions";
 import "./app.css";
 
 export default function App() {
@@ -17,6 +18,12 @@ export default function App() {
         } />
         <Route path="/admin" element={
           <ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>
+        } />
+        <Route path="/admin/users" element={
+          <ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>
+        } />
+        <Route path="/admin/transactions" element={
+          <ProtectedRoute requireAdmin><AdminTransactions /></ProtectedRoute>
         } />
       </Routes>
     </BrowserRouter>

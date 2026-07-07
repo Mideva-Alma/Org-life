@@ -1,5 +1,6 @@
 // controllers/admincontroller.js
 const Budgeter = require('../models/Budgeter');
+const { pool } = require('../config/database');
 
 // GET /api/admin/users
 exports.getAllUsers = async (req, res) => {
@@ -69,6 +70,113 @@ exports.deleteUser = async (req, res) => {
         res.json({ message: 'User and all associated data deleted successfully' });
     } catch (error) {
         console.error('Delete user error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Shared UNION query: normalizes transactions + expenses + income into one shape
+const TRANSACTIONS_UNION_SQL = `
+  SELECT 
+    CONCAT('transactions-', t.id) as row_id,
+    'transactions' as source_table,
+    t.id as original_id,
+    t.budgeter_id,
+    b.full_name as user_name,
+    b.email as user_email,
+    t.type,
+    t.amount,
+    t.category,
+    t.description,
+    t.reference,
+    t.created_at as txn_date
+  FROM transactions t
+  JOIN budgeters b ON t.budgeter_id = b.id
+
+  UNION ALL
+
+  SELECT
+    CONCAT('expenses-', e.id), 'expenses', e.id, e.budgeter_id,
+    b.full_name, b.email, 'expense', e.amount, e.category, e.description,
+    NULL, e.expense_date
+  FROM expenses e
+  JOIN budgeters b ON e.budgeter_id = b.id
+
+  UNION ALL
+
+  SELECT
+    CONCAT('income-', i.id), 'income', i.id, i.budgeter_id,
+    b.full_name, b.email, 'income', i.amount, i.source, i.description,
+    NULL, i.income_date
+  FROM income i
+  JOIN budgeters b ON i.budgeter_id = b.id
+`;
+
+// GET /api/admin/transactions
+exports.getAllTransactions = async (req, res) => {
+    try {
+        const {
+            search = '', budgeter_id, category, type,
+            dateFrom, dateTo, month, page = 1, limit = 20
+        } = req.query;
+
+        const conditions = [];
+        const params = [];
+
+        if (search) {
+            conditions.push(`(description LIKE ? OR category LIKE ? OR user_name LIKE ? OR user_email LIKE ? OR reference LIKE ?)`);
+            const s = `%${search}%`;
+            params.push(s, s, s, s, s);
+        }
+        if (budgeter_id) { conditions.push(`budgeter_id = ?`); params.push(budgeter_id); }
+        if (category) { conditions.push(`category = ?`); params.push(category); }
+        if (type) { conditions.push(`type = ?`); params.push(type); }
+        if (dateFrom) { conditions.push(`txn_date >= ?`); params.push(dateFrom); }
+        if (dateTo) { conditions.push(`txn_date <= ?`); params.push(dateTo); }
+        if (month) { conditions.push(`DATE_FORMAT(txn_date, '%Y-%m') = ?`); params.push(month); }
+
+        const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+        const offset = (parseInt(page) - 1) * parseInt(limit);
+
+        const [rows] = await pool.query(
+            `SELECT * FROM (${TRANSACTIONS_UNION_SQL}) as combined
+             ${whereClause}
+             ORDER BY txn_date DESC
+             LIMIT ? OFFSET ?`,
+            [...params, parseInt(limit), offset]
+        );
+
+        const [[{ total }]] = await pool.query(
+            `SELECT COUNT(*) as total FROM (${TRANSACTIONS_UNION_SQL}) as combined ${whereClause}`,
+            params
+        );
+
+        res.json({ transactions: rows, total, page: parseInt(page), limit: parseInt(limit) });
+    } catch (error) {
+        console.error('Get all transactions error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// DELETE /api/admin/transactions/:sourceTable/:id
+exports.deleteTransaction = async (req, res) => {
+    try {
+        const { sourceTable, id } = req.params;
+        const allowedTables = ['transactions', 'expenses', 'income']; // whitelist — never interpolate raw user input into SQL otherwise
+        if (!allowedTables.includes(sourceTable)) {
+            return res.status(400).json({ error: 'Invalid source table' });
+        }
+
+        const [result] = await pool.execute(
+            `DELETE FROM ${sourceTable} WHERE id = ?`,
+            [id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Transaction not found' });
+        }
+        res.json({ message: 'Transaction deleted successfully' });
+    } catch (error) {
+        console.error('Delete transaction error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
