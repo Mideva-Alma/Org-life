@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import "./Auth.css";
+import "./auth.css";
 
 export default function Auth() {
   const navigate = useNavigate();

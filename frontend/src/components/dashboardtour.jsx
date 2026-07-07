@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./DashboardTour.css";
+import "./dashboardtour.css";
 
 export default function DashboardTour({ onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);

@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
+import Landing from "./pages/landing";
+import Auth from "./pages/auth";
+import Dashboard from "./pages/dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import "./App.css";
+import "./app.css";
 
 export default function App() {
   return (

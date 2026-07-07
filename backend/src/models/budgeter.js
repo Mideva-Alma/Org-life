@@ -88,13 +88,11 @@ class Budgeter {
     }
 
     // Delete budgeter
-    static async delete(id) {
-        const [result] = await pool.execute(
-            'DELETE FROM budgeters WHERE id = ?',
-            [id]
-        );
+    static async deleteWithData(id) {
+        const [result] = await pool.execute('DELETE FROM budgeters WHERE id = ?', [id]);
         return result.affectedRows > 0;
     }
+    
 }
 
 module.exports = Budgeter;

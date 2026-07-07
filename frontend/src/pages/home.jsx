@@ -14,7 +14,7 @@ import {
 } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import api from "../services/api";
-import "./Home.css";
+import "./home.css";
 
 // Register ChartJS components
 ChartJS.register(

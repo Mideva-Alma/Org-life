@@ -98,6 +98,10 @@ const api = {
         return this.request(`/income${query ? '?' + query : ''}`);
     },
 
+    getIncome(params = {}) {
+        return this.getIncomes(params);
+    },
+
     createIncome(data) {
         return this.request('/income', {
             method: 'POST',
@@ -105,7 +109,7 @@ const api = {
         });
     },
 
-    getIncome(id) {
+    getIncomeById(id) {
         return this.request(`/income/${id}`);
     },
 
@@ -146,12 +150,12 @@ getTransactions(params = {}) {
     return this.request(`/transactions${query ? '?' + query : ''}`);
 },
 
-getExpenses(params = {}) {
+getTransactionExpenses(params = {}) {
     const query = new URLSearchParams(params).toString();
     return this.request(`/transactions/expenses${query ? '?' + query : ''}`);
 },
 
-getIncome(params = {}) {
+getTransactionIncome(params = {}) {
     const query = new URLSearchParams(params).toString();
     return this.request(`/transactions/income${query ? '?' + query : ''}`);
 },
