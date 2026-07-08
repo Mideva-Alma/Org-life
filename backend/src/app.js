@@ -1,3 +1,4 @@
+// backend/src/app.js
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -9,6 +10,7 @@ const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const incomeRoutes = require('./routes/incomeRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
+const adminRoutes = require('./routes/adminRoutes'); 
 
 const app = express();
 
@@ -27,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/income', incomeRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -35,7 +35,7 @@ class Budgeter {
     static async findById(id) {
         const [rows] = await pool.execute(
             `SELECT b.id, b.email, b.full_name, b.phone_number, b.currency, 
-                    b.is_verified, b.created_at, b.updated_at,
+                    b.is_verified, b.role, b.is_active, b.created_at, b.updated_at,
                     p.avatar_url
              FROM budgeters b
              LEFT JOIN profiles p ON b.id = p.id
@@ -43,6 +43,39 @@ class Budgeter {
             [id]
         );
         return rows[0];
+    }
+
+    // List / search all budgeters (admin)
+    static async findAll({ search = '', page = 1, limit = 20 } = {}) {
+        const offset = (page - 1) * limit;
+        const searchTerm = `%${search}%`;
+
+        const [rows] = await pool.query(
+            `SELECT id, email, full_name, phone_number, currency, role, is_active, 
+                    is_verified, created_at
+             FROM budgeters
+             WHERE full_name LIKE ? OR email LIKE ? OR phone_number LIKE ?
+             ORDER BY created_at DESC
+             LIMIT ? OFFSET ?`,
+            [searchTerm, searchTerm, searchTerm, limit, offset]
+        );
+
+        const [[{ total }]] = await pool.execute(
+            `SELECT COUNT(*) as total FROM budgeters
+             WHERE full_name LIKE ? OR email LIKE ? OR phone_number LIKE ?`,
+            [searchTerm, searchTerm, searchTerm]
+        );
+
+        return { users: rows, total, page, limit };
+    }
+
+    // Activate / deactivate a budgeter
+    static async setActiveStatus(id, isActive) {
+        const [result] = await pool.execute(
+            'UPDATE budgeters SET is_active = ? WHERE id = ?',
+            [isActive, id]
+        );
+        return result.affectedRows > 0;
     }
 
     // Update budgeter
@@ -88,13 +121,11 @@ class Budgeter {
     }
 
     // Delete budgeter
-    static async delete(id) {
-        const [result] = await pool.execute(
-            'DELETE FROM budgeters WHERE id = ?',
-            [id]
-        );
+    static async deleteWithData(id) {
+        const [result] = await pool.execute('DELETE FROM budgeters WHERE id = ?', [id]);
         return result.affectedRows > 0;
     }
+    
 }
 
 module.exports = Budgeter;

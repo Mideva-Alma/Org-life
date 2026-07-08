@@ -1,3 +1,4 @@
+// frontend/src/services/api.js
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const api = {
@@ -97,6 +98,10 @@ const api = {
         return this.request(`/income${query ? '?' + query : ''}`);
     },
 
+    getIncome(params = {}) {
+        return this.getIncomes(params);
+    },
+
     createIncome(data) {
         return this.request('/income', {
             method: 'POST',
@@ -104,7 +109,7 @@ const api = {
         });
     },
 
-    getIncome(id) {
+    getIncomeById(id) {
         return this.request(`/income/${id}`);
     },
 
@@ -145,12 +150,12 @@ getTransactions(params = {}) {
     return this.request(`/transactions${query ? '?' + query : ''}`);
 },
 
-getExpenses(params = {}) {
+getTransactionExpenses(params = {}) {
     const query = new URLSearchParams(params).toString();
     return this.request(`/transactions/expenses${query ? '?' + query : ''}`);
 },
 
-getIncome(params = {}) {
+getTransactionIncome(params = {}) {
     const query = new URLSearchParams(params).toString();
     return this.request(`/transactions/income${query ? '?' + query : ''}`);
 },
@@ -193,7 +198,41 @@ getDailySpending(startDate, endDate) {
 
 getMonthlySummary(month) {
     return this.request(`/transactions/summary/monthly?month=${month}`);
-}
+},
+// ============ ADMIN: USER MANAGEMENT ============
+    getAllUsers(params = {}) {
+        const query = new URLSearchParams(params).toString();
+        return this.request(`/admin/users${query ? '?' + query : ''}`);
+    },
+
+    getUserById(id) {
+        return this.request(`/admin/users/${id}`);
+    },
+
+    toggleUserStatus(id, is_active) {
+        return this.request(`/admin/users/${id}/status`, {
+            method: 'PUT',
+            body: JSON.stringify({ is_active })
+        });
+    },
+
+    deleteUser(id) {
+        return this.request(`/admin/users/${id}`, {
+            method: 'DELETE'
+        });
+    },
+
+// ============ ADMIN: TRANSACTION MANAGEMENT ============
+    getAllTransactionsAdmin(params = {}) {
+        const query = new URLSearchParams(params).toString();
+        return this.request(`/admin/transactions${query ? '?' + query : ''}`);
+    },
+
+    deleteTransactionAdmin(sourceTable, id) {
+        return this.request(`/admin/transactions/${sourceTable}/${id}`, {
+            method: 'DELETE'
+        });
+    }
 };
 
 export default api;

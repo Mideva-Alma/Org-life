@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import Home from "./Home";
+import Home from "./home";
 import Expenses from "./Expenses";
 import Categories from "./Categories";
 import Income from "./Income";
 import DashboardTour from "../components/DashboardTour";
 import Profile from "./Profile";
 import "./Dashboard.css";
+
 
 export default function Dashboard() {
   const navigate = useNavigate();

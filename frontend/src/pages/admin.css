@@ -1,0 +1,164 @@
+/* ===== VINTAGE ADMIN EXTENSIONS ===== */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.filter-input,
+.filter-select {
+  padding: 9px 12px;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.filter-label {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Data table, vintage ledger style */
+.admin-table-wrap {
+  background: #fcf8f4;
+  border: 2px solid #d4c8bc;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 12px 14px;
+  background: #1a2a3a;
+  color: #f5f0eb;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.admin-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e8e0d8;
+  color: #1a2a3a;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background: #f5f0eb;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+}
+
+.status-badge.active {
+  color: #2a6a4a;
+  border-color: #2a6a4a;
+  background: rgba(42, 106, 74, 0.08);
+}
+
+.status-badge.inactive {
+  color: #c44a3a;
+  border-color: #c44a3a;
+  background: rgba(196, 74, 58, 0.08);
+}
+
+.status-badge.income {
+  color: #2a6a4a;
+  border-color: #2a6a4a;
+}
+
+.status-badge.expense {
+  color: #8a3a2a;
+  border-color: #8a3a2a;
+}
+
+/* Buttons */
+.btn-small {
+  padding: 6px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  border: 2px solid #1a2a3a;
+  background: #fcf8f4;
+  color: #1a2a3a;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-right: 6px;
+}
+
+.btn-small:hover {
+  background: #1a2a3a;
+  color: #f5f0eb;
+}
+
+.btn-small.danger {
+  border-color: #c44a3a;
+  color: #c44a3a;
+}
+
+.btn-small.danger:hover {
+  background: #c44a3a;
+  color: #fcf8f4;
+}
+
+/* Pagination */
+.pagination-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+}
+
+.pagination-bar button {
+  padding: 6px 16px;
+  border: 2px solid #d4c8bc;
+  background: #fcf8f4;
+  color: #1a2a3a;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.pagination-bar button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-bar button:not(:disabled):hover {
+  border-color: #1a2a3a;
+}
