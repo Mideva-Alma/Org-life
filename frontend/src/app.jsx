@@ -1,12 +1,12 @@
 // frontend/src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Landing from './pages/Landing';
-import Auth from './pages/Auth';
+import Landing from './pages/Landing';  // Make sure file is Landing.jsx
+import Auth from './pages/Auth';        // Make sure file is Auth.jsx
 import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/AdminDashboard'; // <-- Import this
-import Verify from './pages/Verify';
+import AdminDashboard from './pages/AdminDashboard';
+import Verify from './pages/Verify'; // <-- CHANGE: lowercase 'v' if file is verify.jsx
 import ProtectedRoute from './components/ProtectedRoute';
-import './App.css';
+import './app.css'; 
 
 function App() {
   return (

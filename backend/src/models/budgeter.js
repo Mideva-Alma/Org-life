@@ -24,26 +24,28 @@ class Budgeter {
 
     // Find budgeter by email
     static async findByEmail(email) {
-        const [rows] = await pool.execute(
-            'SELECT * FROM budgeters WHERE email = ?',
-            [email.toLowerCase()]
-        );
-        return rows[0];
-    }
+    const [rows] = await pool.execute(
+        'SELECT * FROM budgeters WHERE email = ?',
+        [email.toLowerCase()]
+    );
+    console.log('🔍 findByEmail result:', rows[0] ? 'FOUND' : 'NOT FOUND'); // DEBUG
+    return rows[0];
+}
 
     // Find budgeter by ID
     static async findById(id) {
-        const [rows] = await pool.execute(
-            `SELECT b.id, b.email, b.full_name, b.phone_number, b.currency, 
-                    b.is_verified, b.role, b.is_active, b.created_at, b.updated_at,
-                    p.avatar_url
-             FROM budgeters b
-             LEFT JOIN profiles p ON b.id = p.id
-             WHERE b.id = ?`,
-            [id]
-        );
-        return rows[0];
-    }
+    const [rows] = await pool.execute(
+        `SELECT b.id, b.email, b.full_name, b.phone_number, b.currency, 
+                b.is_verified, b.role, b.is_active, b.created_at, b.updated_at,
+                p.avatar_url
+         FROM budgeters b
+         LEFT JOIN profiles p ON b.id = p.id
+         WHERE b.id = ?`,
+        [id]
+    );
+    console.log('🔍 findById result:', rows[0]); // DEBUG - Check if role is returned
+    return rows[0];
+}
 
     // List / search all budgeters (admin)
     static async findAll({ search = '', page = 1, limit = 20 } = {}) {

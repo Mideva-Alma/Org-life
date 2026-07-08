@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import api from "../services/api";
 import AdminLayout from "../components/AdminLayout";
-import "./admin.css";
+import "./Admin.css";
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);

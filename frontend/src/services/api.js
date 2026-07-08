@@ -25,10 +25,11 @@ const api = {
         if (!response.ok) {
             // Handle unauthorized (token expired)
             if (response.status === 401) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('role');
-                localStorage.removeItem('email');
-                window.location.href = '/auth';
+                // localStorage.removeItem('token');
+                // localStorage.removeItem('role');
+                // localStorage.removeItem('email');
+                // window.location.href = '/auth';
+                throw new Error('Unauthorized. Please log in again.');
             }
             throw new Error(data.error || 'Request failed');
         }
@@ -59,25 +60,25 @@ const api = {
     },
 
     async signIn(data) {
-        const response = await this.request('/auth/signin', {
-            method: 'POST',
-            body: JSON.stringify(data)
-        });
-        
-        // Return standardized response with user data
-        return {
-            token: response.token,
-            budgeter: {
-                id: response.user?.id || response.budgeter?.id,
-                email: response.user?.email || response.budgeter?.email,
-                full_name: response.user?.full_name || response.budgeter?.full_name,
-                role: response.user?.role || response.budgeter?.role || 'user',
-                is_verified: response.user?.is_verified || response.budgeter?.is_verified || false,
-                is_active: response.user?.is_active !== undefined ? response.user.is_active : true,
-                currency: response.user?.currency || response.budgeter?.currency || 'KES'
-            }
-        };
-    },
+  const response = await this.request('/auth/signin', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+  
+  console.log("📡 API signIn response:", response);
+  
+  return {
+    token: response.token,
+    budgeter: {
+      id: response.budgeter?.id || response.user?.id,
+      email: response.budgeter?.email || response.user?.email,
+      full_name: response.budgeter?.full_name || response.user?.full_name,
+      role: response.budgeter?.role || response.user?.role || 'user',
+      is_verified: response.budgeter?.is_verified || false,
+      is_active: response.budgeter?.is_active !== false
+    }
+  };
+},
 
     // NEW: Request verification
     async requestVerification(email) {

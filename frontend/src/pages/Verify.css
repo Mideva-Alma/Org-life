@@ -1,0 +1,63 @@
+/* frontend/src/pages/verify.css */
+.verify-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f0eb;
+  font-family: 'Courier New', 'Times New Roman', serif;
+  padding: 20px;
+}
+
+.verify-card {
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  padding: 40px 32px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 8px 8px 0 rgba(26, 42, 58, 0.12);
+}
+
+.verify-card h1 {
+  font-family: 'Times New Roman', serif;
+  font-size: 28px;
+  color: #1a2a3a;
+  margin: 0 0 16px 0;
+  letter-spacing: 2px;
+}
+
+.verify-card p {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #4a5a6a;
+  margin: 12px 0;
+}
+
+.success-message {
+  color: #2d7a3a !important;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #8a3a3a !important;
+  font-weight: bold;
+}
+
+.verify-card button {
+  margin-top: 16px;
+  padding: 12px 32px;
+  background: #1a2a3a;
+  color: #f5f0eb;
+  border: 2px solid #1a2a3a;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 1px;
+}
+
+.verify-card button:hover {
+  background: #2a4a6a;
+  border-color: #2a4a6a;
+}

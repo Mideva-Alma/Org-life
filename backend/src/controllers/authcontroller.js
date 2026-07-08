@@ -1,8 +1,9 @@
 // controllers/authcontroller.js
 const Budgeter = require('../models/Budgeter');
 const jwt = require('jsonwebtoken');
-const { sendEmail } = require('../config/email'); // <-- ADD THIS
-const crypto = require('crypto'); // <-- ADD THIS
+const bcrypt = require('bcryptjs');
+const { sendEmail } = require('../config/email');
+const crypto = require('crypto');
 require('dotenv').config();
 
 // Generate JWT Token
@@ -14,16 +15,15 @@ const generateToken = (budgeterId, role) => {
     );
 };
 
-// ADD THIS: Generate verification token
+// Generate verification token
 const generateVerificationToken = () => {
     return crypto.randomBytes(32).toString('hex');
 };
 
-// ADD THIS: Send verification email
+// Send verification email
 const sendVerificationEmail = async (budgeter) => {
     const token = generateVerificationToken();
     
-    // Store token in database (you'll need to add these columns to budgeters table)
     await Budgeter.updateVerificationToken(budgeter.id, token);
     
     const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify?token=${token}`;
@@ -67,7 +67,9 @@ const sendVerificationEmail = async (budgeter) => {
     });
 };
 
-// Sign Up (UPDATED)
+// ============ AUTH CONTROLLERS ============
+
+// Sign Up
 exports.signUp = async (req, res) => {
     try {
         const { email, password, full_name, phone_number, currency } = req.body;
@@ -95,7 +97,6 @@ exports.signUp = async (req, res) => {
             return res.status(400).json({ error: 'Budgeter with this email already exists' });
         }
 
-        // New signups are always plain users. Admins are promoted manually in the DB.
         const budgeterId = await Budgeter.create({
             email,
             password,
@@ -107,7 +108,6 @@ exports.signUp = async (req, res) => {
         const token = generateToken(budgeterId, 'user');
         const budgeter = await Budgeter.findById(budgeterId);
 
-        // Send verification email (don't block signup if it fails)
         try {
             const emailResult = await sendVerificationEmail(budgeter);
             if (emailResult.success) {
@@ -117,7 +117,6 @@ exports.signUp = async (req, res) => {
             }
         } catch (emailError) {
             console.error('Email sending error (non-blocking):', emailError);
-            // Don't fail signup if email fails
         }
 
         res.status(201).json({
@@ -125,7 +124,7 @@ exports.signUp = async (req, res) => {
             token,
             budgeter: {
                 ...budgeter,
-                is_verified: false // New users are not verified yet
+                is_verified: false
             }
         });
     } catch (error) {
@@ -134,62 +133,75 @@ exports.signUp = async (req, res) => {
     }
 };
 
-// Sign In (UPDATED - add inactivity check)
+// Sign In - FIXED: Explicitly includes role
 exports.signIn = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
-        }
+        console.log('🔍 Login attempt:', email); // <-- Should show in terminal
 
         const budgeter = await Budgeter.findByEmail(email);
+        console.log('🔍 User found:', budgeter ? 'YES' : 'NO'); // <-- Should show
+
         if (!budgeter) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
         const isValidPassword = await Budgeter.comparePassword(password, budgeter.password);
+        console.log('🔍 Password valid:', isValidPassword ? 'YES' : 'NO'); // <-- Should show
+
         if (!isValidPassword) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // NEW: Check for inactivity (2 weeks)
-        const twoWeeksAgo = new Date();
-        twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-        
-        const lastLoginDate = budgeter.last_login || budgeter.created_at;
-        const isInactive = new Date(lastLoginDate) < twoWeeksAgo;
-        
-        // Only deactivate if inactive for 2+ weeks AND not active
-        if (budgeter.is_active === 0 && isInactive) {
-            return res.status(403).json({ 
-                error: 'This account has been deactivated due to inactivity. Please contact support.',
-                needsActivation: true
-            });
+    const token = generateToken(budgeter.id, budgeter.role);
+
+    // ✅ THIS MUST RETURN THE ROLE
+    res.json({
+      message: 'Login successful',
+      token,
+      budgeter: {
+        id: budgeter.id,
+        email: budgeter.email,
+        full_name: budgeter.full_name,
+        role: budgeter.role, // <-- CRITICAL
+        is_verified: budgeter.is_verified || false,
+        is_active: budgeter.is_active !== 0
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Get Current Budgeter - FIXED: Explicitly returns role
+exports.getCurrentBudgeter = async (req, res) => {
+    try {
+        const budgeter = await Budgeter.findById(req.user.id);
+        if (!budgeter) {
+            return res.status(404).json({ error: 'Budgeter not found' });
         }
-
-        // Update last login
-        await Budgeter.updateLastLogin(budgeter.id);
-
-        const token = generateToken(budgeter.id, budgeter.role);
-        const budgeterData = await Budgeter.findById(budgeter.id);
-
+        
+        // Get the role from the token or database
+        const role = req.user.role || budgeter.role;
+        
         res.json({
-            message: 'Login successful',
-            token,
-            budgeter: {
-                ...budgeterData,
-                is_verified: budgeterData.is_verified || false,
-                is_active: budgeterData.is_active !== 0
-            }
+            ...budgeter,
+            role: role // <-- Explicitly include role
         });
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('Get budgeter error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
 
+// Logout
+exports.logout = async (req, res) => {
+    res.json({ message: 'Logout successful' });
+};
+
 // ============ PASSWORD RESET ============
+
 exports.requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body;
@@ -203,13 +215,9 @@ exports.requestPasswordReset = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
         
-        // Generate reset token
         const resetToken = crypto.randomBytes(32).toString('hex');
-        
-        // Store in database
         await Budgeter.updateResetToken(budgeter.id, resetToken);
         
-        // Send reset email via Ethereal
         const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
         
         const html = `
@@ -261,18 +269,14 @@ exports.resetPassword = async (req, res) => {
             return res.status(400).json({ error: 'Password must be at least 6 characters' });
         }
         
-        // Find user with valid reset token
         const budgeter = await Budgeter.findByResetToken(token);
         
         if (!budgeter) {
             return res.status(400).json({ error: 'Invalid or expired reset token' });
         }
         
-        // Update password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Budgeter.updatePassword(budgeter.id, hashedPassword);
-        
-        // Clear reset token
         await Budgeter.clearResetToken(budgeter.id);
         
         res.json({ success: true, message: 'Password reset successfully!' });
@@ -282,28 +286,8 @@ exports.resetPassword = async (req, res) => {
     }
 };
 
-// Get Current Budgeter
-exports.getCurrentBudgeter = async (req, res) => {
-    try {
-        const budgeter = await Budgeter.findById(req.user.id);
-        if (!budgeter) {
-            return res.status(404).json({ error: 'Budgeter not found' });
-        }
-        res.json(budgeter);
-    } catch (error) {
-        console.error('Get budgeter error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
+// ============ VERIFICATION ENDPOINTS ============
 
-// Logout
-exports.logout = async (req, res) => {
-    res.json({ message: 'Logout successful' });
-};
-
-// ============ NEW: Verification Endpoints ============
-
-// Verify email with token
 exports.verifyEmail = async (req, res) => {
     try {
         const { token } = req.body;
@@ -312,22 +296,18 @@ exports.verifyEmail = async (req, res) => {
             return res.status(400).json({ error: 'Verification token is required' });
         }
         
-        // Find user with this token and not expired
         const budgeter = await Budgeter.findByVerificationToken(token);
         
         if (!budgeter) {
             return res.status(400).json({ error: 'Invalid or expired verification token' });
         }
         
-        // Check if token expired
         if (budgeter.verification_expires && new Date(budgeter.verification_expires) < new Date()) {
             return res.status(400).json({ error: 'Verification token has expired. Please request a new one.' });
         }
         
-        // Mark as verified
         await Budgeter.markAsVerified(budgeter.id);
         
-        // Generate new token for login
         const authToken = generateToken(budgeter.id, budgeter.role);
         
         res.json({
@@ -349,7 +329,6 @@ exports.verifyEmail = async (req, res) => {
     }
 };
 
-// Request verification email (resend)
 exports.requestVerification = async (req, res) => {
     try {
         const { email } = req.body;
@@ -368,7 +347,6 @@ exports.requestVerification = async (req, res) => {
             return res.status(400).json({ error: 'Email already verified' });
         }
         
-        // Send new verification email
         const emailResult = await sendVerificationEmail(budgeter);
         
         if (emailResult.success) {
@@ -386,7 +364,6 @@ exports.requestVerification = async (req, res) => {
     }
 };
 
-// Check user status (for frontend)
 exports.checkUserStatus = async (req, res) => {
     try {
         const { email } = req.query;
@@ -408,6 +385,34 @@ exports.checkUserStatus = async (req, res) => {
         });
     } catch (error) {
         console.error('Check status error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// ============ ADMIN: VERIFY USER BY ID ============
+
+exports.verifyUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const budgeter = await Budgeter.findById(id);
+        if (!budgeter) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        if (budgeter.is_verified) {
+            return res.status(400).json({ error: 'User is already verified' });
+        }
+        
+        await Budgeter.markAsVerified(id);
+        
+        res.json({ 
+            success: true, 
+            message: 'User verified successfully!',
+            user: await Budgeter.findById(id)
+        });
+    } catch (error) {
+        console.error('Admin verify error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
