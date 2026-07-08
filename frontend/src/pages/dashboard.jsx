@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import Home from "./home";
+import Home from "./Home";
 import Expenses from "./Expenses";
 import Categories from "./Categories";
 import Income from "./Income";
-import DashboardTour from "../components/DashboardTour";
+import DashboardTour from "../components/Dashboardtour";
 import Profile from "./Profile";
 import "./Dashboard.css";
 
