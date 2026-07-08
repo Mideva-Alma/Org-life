@@ -125,7 +125,78 @@ class Budgeter {
         const [result] = await pool.execute('DELETE FROM budgeters WHERE id = ?', [id]);
         return result.affectedRows > 0;
     }
-    
+
+    // ============ NEW: Verification Methods ============
+
+    // Update last login
+    static async updateLastLogin(id) {
+        const [result] = await pool.execute(
+            'UPDATE budgeters SET last_login = NOW() WHERE id = ?',
+            [id]
+        );
+        return result;
+    }
+
+    // Update verification token
+    static async updateVerificationToken(id, token) {
+        const [result] = await pool.execute(
+            'UPDATE budgeters SET verification_token = ?, verification_expires = DATE_ADD(NOW(), INTERVAL 24 HOUR) WHERE id = ?',
+            [token, id]
+        );
+        return result;
+    }
+
+    // Find by verification token
+    static async findByVerificationToken(token) {
+        const [rows] = await pool.execute(
+            'SELECT * FROM budgeters WHERE verification_token = ? AND verification_expires > NOW()',
+            [token]
+        );
+        return rows[0] || null;
+    }
+
+    // Mark as verified
+    static async markAsVerified(id) {
+        const [result] = await pool.execute(
+            'UPDATE budgeters SET is_verified = TRUE, verification_token = NULL, verification_expires = NULL WHERE id = ?',
+            [id]
+        );
+        return result;
+    }
+
+    // ============ PASSWORD RESET METHODS ============
+
+static async updateResetToken(id, token) {
+    const [result] = await pool.execute(
+        'UPDATE budgeters SET reset_token = ?, reset_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id = ?',
+        [token, id]
+    );
+    return result;
+}
+
+static async findByResetToken(token) {
+    const [rows] = await pool.execute(
+        'SELECT * FROM budgeters WHERE reset_token = ? AND reset_expires > NOW()',
+        [token]
+    );
+    return rows[0] || null;
+}
+
+static async updatePassword(id, hashedPassword) {
+    const [result] = await pool.execute(
+        'UPDATE budgeters SET password = ? WHERE id = ?',
+        [hashedPassword, id]
+    );
+    return result;
+}
+
+static async clearResetToken(id) {
+    const [result] = await pool.execute(
+        'UPDATE budgeters SET reset_token = NULL, reset_expires = NULL WHERE id = ?',
+        [id]
+    );
+    return result;
+}
 }
 
 module.exports = Budgeter;

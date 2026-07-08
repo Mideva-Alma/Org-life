@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import VerificationModal from "../components/VerificationModal";
+import ForgotPasswordModal from "../components/ForgotPasswordModal";
 import "./auth.css";
 
 export default function Auth() {
@@ -16,6 +18,16 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [validationErrors, setValidationErrors] = useState([]);
+  
+  // Verification modal state
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [pendingUser, setPendingUser] = useState(null);
+  
+  // Forgot password modal state
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  
+  // NEW: Login mode - 'user' or 'admin'
+  const [loginMode, setLoginMode] = useState('user');
 
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
@@ -24,6 +36,17 @@ export default function Auth() {
     setFullName("");
     setPhoneNumber("");
     setAcceptTerms(false);
+    setError("");
+    setValidationErrors([]);
+    setShowVerificationModal(false);
+    setLoginMode('user');
+  };
+
+  // NEW: Switch login mode
+  const switchLoginMode = (mode) => {
+    setLoginMode(mode);
+    setEmail("");
+    setPassword("");
     setError("");
     setValidationErrors([]);
   };
@@ -68,8 +91,17 @@ export default function Auth() {
     return errors;
   };
 
-async function signUp() {
-    // ...unchanged validation...
+  async function signUp() {
+    const errors = validateSignUp();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setValidationErrors([]);
+
     try {
       const response = await api.signUp({
         email: email.trim(),
@@ -81,8 +113,16 @@ async function signUp() {
 
       localStorage.setItem('token', response.token);
       localStorage.setItem('role', response.budgeter.role);
+      localStorage.setItem('email', response.budgeter.email);
+      
       alert("✅ Account created successfully!");
-      navigate("/dashboard"); // new budgeters are plain users
+      
+      setPendingUser({
+        email: response.budgeter.email,
+        full_name: response.budgeter.full_name
+      });
+      setShowVerificationModal(true);
+      
     } catch (error) {
       setError(error.message);
     } finally {
@@ -91,6 +131,16 @@ async function signUp() {
   }
 
   async function signIn() {
+    const errors = validateSignIn();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setValidationErrors([]);
+
     try {
       const response = await api.signIn({
         email: email.trim(),
@@ -100,13 +150,52 @@ async function signUp() {
       localStorage.setItem('token', response.token);
       localStorage.setItem('role', response.budgeter.role);
       localStorage.setItem('email', response.budgeter.email);
-      navigate(response.budgeter.role === 'admin' ? '/admin' : '/dashboard');
+      
+      const isVerified = response.budgeter.is_verified || false;
+      
+      if (!isVerified) {
+        setPendingUser({
+          email: response.budgeter.email,
+          full_name: response.budgeter.full_name
+        });
+        setShowVerificationModal(true);
+      } else {
+        if (response.budgeter.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+      }
     } catch (error) {
-      setError(error.message);
+      if (error.message && error.message.includes('deactivated')) {
+        setError("⚠️ This account has been deactivated due to inactivity. Please contact support.");
+      } else {
+        setError(error.message);
+      }
     } finally {
       setLoading(false);
     }
   }
+
+  const handleVerificationSkip = () => {
+    setShowVerificationModal(false);
+    const role = localStorage.getItem('role');
+    navigate(role === 'admin' ? '/admin' : '/dashboard');
+  };
+
+  const handleVerificationComplete = () => {
+    setShowVerificationModal(false);
+    const role = localStorage.getItem('role');
+    navigate(role === 'admin' ? '/admin' : '/dashboard');
+  };
+
+  const handleForgotPassword = () => {
+    setShowForgotPassword(true);
+  };
+
+  const handleForgotPasswordClose = () => {
+    setShowForgotPassword(false);
+  };
 
   return (
     <div className="auth-container">
@@ -116,8 +205,27 @@ async function signUp() {
         </button>
 
         <h1 className="auth-title">⚓ Org-Life</h1>
+        
+        {/* NEW: Tab Switcher - Only show on signin page */}
+        {!isSignUp && (
+          <div className="auth-tabs">
+            <button 
+              className={`auth-tab ${loginMode === 'user' ? 'active' : ''}`}
+              onClick={() => switchLoginMode('user')}
+            >
+              👤 User
+            </button>
+            <button 
+              className={`auth-tab ${loginMode === 'admin' ? 'active' : ''}`}
+              onClick={() => switchLoginMode('admin')}
+            >
+              🔐 Admin
+            </button>
+          </div>
+        )}
+        
         <p className="auth-subtitle">
-          {isSignUp ? "Create your account" : "Welcome back"}
+          {isSignUp ? "Create your account" : loginMode === 'admin' ? "Admin Access" : "Welcome back"}
         </p>
 
         {error && (
@@ -137,7 +245,7 @@ async function signUp() {
 
         <input
           className="auth-input"
-          placeholder="Email"
+          placeholder={loginMode === 'admin' ? "Admin Email" : "Email"}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -210,12 +318,54 @@ async function signUp() {
           </button>
         </div>
 
+        {/* NEW: Only show these on signin page */}
+        {!isSignUp && (
+          <>
+            {/* Forgot password link */}
+            <div className="auth-links">
+              <button 
+                className="link-button forgot-password" 
+                onClick={handleForgotPassword}
+              >
+                Forgot Password?
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="auth-divider">
+              <span>or</span>
+            </div>
+          </>
+        )}
+
         <p className="auth-toggle" onClick={toggleMode}>
           {isSignUp 
             ? "Already have an account? Sign In" 
             : "Don't have an account? Sign Up"}
         </p>
+
+        {/* NEW: Show demo admin hint only on admin login mode */}
+        {!isSignUp && loginMode === 'admin' && (
+          <p className="auth-hint">
+            <small>Demo Admin: admin@orglife.com / admin123</small>
+          </p>
+        )}
       </div>
+
+      {/* Verification Modal */}
+      {showVerificationModal && pendingUser && (
+        <VerificationModal
+          email={pendingUser.email}
+          fullName={pendingUser.full_name}
+          onSkip={handleVerificationSkip}
+          onVerified={handleVerificationComplete}
+        />
+      )}
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <ForgotPasswordModal onClose={handleForgotPasswordClose} />
+      )}
     </div>
   );
 }

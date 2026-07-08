@@ -26,6 +26,8 @@ const api = {
             // Handle unauthorized (token expired)
             if (response.status === 401) {
                 localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                localStorage.removeItem('email');
                 window.location.href = '/auth';
             }
             throw new Error(data.error || 'Request failed');
@@ -35,18 +37,67 @@ const api = {
     },
 
     // ============ AUTH ENDPOINTS ============
-    signUp(data) {
-        return this.request('/auth/signup', {
+    async signUp(data) {
+        const response = await this.request('/auth/signup', {
             method: 'POST',
             body: JSON.stringify(data)
+        });
+        
+        // Store the response with user data
+        return {
+            token: response.token,
+            budgeter: {
+                id: response.user?.id || response.budgeter?.id,
+                email: response.user?.email || response.budgeter?.email,
+                full_name: response.user?.full_name || response.budgeter?.full_name,
+                role: response.user?.role || response.budgeter?.role || 'user',
+                is_verified: response.user?.is_verified || response.budgeter?.is_verified || false,
+                is_active: response.user?.is_active !== undefined ? response.user.is_active : true,
+                currency: response.user?.currency || response.budgeter?.currency || 'KES'
+            }
+        };
+    },
+
+    async signIn(data) {
+        const response = await this.request('/auth/signin', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+        
+        // Return standardized response with user data
+        return {
+            token: response.token,
+            budgeter: {
+                id: response.user?.id || response.budgeter?.id,
+                email: response.user?.email || response.budgeter?.email,
+                full_name: response.user?.full_name || response.budgeter?.full_name,
+                role: response.user?.role || response.budgeter?.role || 'user',
+                is_verified: response.user?.is_verified || response.budgeter?.is_verified || false,
+                is_active: response.user?.is_active !== undefined ? response.user.is_active : true,
+                currency: response.user?.currency || response.budgeter?.currency || 'KES'
+            }
+        };
+    },
+
+    // NEW: Request verification
+    async requestVerification(email) {
+        return this.request('/auth/request-verification', {
+            method: 'POST',
+            body: JSON.stringify({ email })
         });
     },
 
-    signIn(data) {
-        return this.request('/auth/signin', {
+    // NEW: Verify user with token
+    async verifyUser(token) {
+        return this.request('/auth/verify', {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: JSON.stringify({ token })
         });
+    },
+
+    // NEW: Check if user is active
+    async checkUserStatus(email) {
+        return this.request(`/auth/check-status?email=${encodeURIComponent(email)}`);
     },
 
     getCurrentUser() {
@@ -55,6 +106,8 @@ const api = {
 
     logout() {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('email');
         return this.request('/auth/logout', { method: 'POST' });
     },
 
@@ -199,6 +252,7 @@ getDailySpending(startDate, endDate) {
 getMonthlySummary(month) {
     return this.request(`/transactions/summary/monthly?month=${month}`);
 },
+
 // ============ ADMIN: USER MANAGEMENT ============
     getAllUsers(params = {}) {
         const query = new URLSearchParams(params).toString();

@@ -1,4 +1,3 @@
-/* frontend/src/pages/auth.css */
 /* ===== VINTAGE AUTH STYLES ===== */
 .auth-container {
   min-height: 100vh;
@@ -20,45 +19,6 @@
   position: relative;
 }
 
-.auth-title {
-  font-family: 'Times New Roman', serif;
-  font-size: 28px;
-  color: #1a2a3a;
-  text-align: center;
-  margin-bottom: 4px;
-  letter-spacing: 2px;
-}
-
-.auth-subtitle {
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-  color: #4a5a6a;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.auth-input {
-  width: 100%;
-  padding: 10px 12px;
-  margin: 6px 0;
-  border: 2px solid #d4c8bc;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  background: #fcf8f4;
-  color: #1a2a3a;
-  transition: border-color 0.3s;
-}
-
-.auth-input:focus {
-  outline: none;
-  border-color: #1a2a3a;
-}
-
-.auth-input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* Back Button */
 .back-button {
   position: absolute;
@@ -77,6 +37,74 @@
 .back-button:hover {
   border-color: #1a2a3a;
   color: #1a2a3a;
+}
+
+.auth-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 28px;
+  color: #1a2a3a;
+  text-align: center;
+  margin-bottom: 4px;
+  letter-spacing: 2px;
+}
+
+/* Admin badge - vintage style */
+.admin-badge {
+  background: #1a2a3a;
+  color: #f5f0eb;
+  padding: 6px 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  display: inline-block;
+  margin: 4px auto 10px;
+  text-align: center;
+  width: fit-content;
+  letter-spacing: 2px;
+  border: 1px solid #d4c8bc;
+  position: relative;
+}
+
+.admin-badge::before {
+  content: '🔐 ';
+  font-size: 12px;
+}
+
+.auth-subtitle {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+/* Inputs */
+.auth-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 6px 0;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.auth-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-input::placeholder {
+  color: #b4a89c;
 }
 
 /* Currency Select */
@@ -161,6 +189,99 @@
   cursor: not-allowed;
 }
 
+/* ===== AUTH LINKS - Vintage Style ===== */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 12px 0 10px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #d4c8bc;
+}
+
+.auth-divider span {
+  padding: 0 16px;
+  color: #b4a89c;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.auth-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 6px 0 2px;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: all 0.3s;
+  text-decoration: none;
+  position: relative;
+}
+
+.link-button::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: #1a2a3a;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.link-button:hover::after {
+  width: 80%;
+}
+
+/* Admin toggle - vintage style */
+.link-button.admin-toggle {
+  color: #4a5a6a;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border: 1px solid #d4c8bc;
+  padding: 6px 20px;
+  background: #fcf8f4;
+}
+
+.link-button.admin-toggle:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+.link-button.admin-toggle::after {
+  display: none;
+}
+
+/* Forgot password - vintage style */
+.link-button.forgot-password {
+  color: #8a3a3a;
+  font-style: italic;
+}
+
+.link-button.forgot-password:hover {
+  color: #5a2a2a;
+}
+
+.link-button.forgot-password::after {
+  background: #8a3a3a;
+}
+
 /* Toggle */
 .auth-toggle {
   margin-top: 16px;
@@ -178,7 +299,24 @@
   color: #1a2a3a;
 }
 
-/* Error Messages */
+/* Auth hint - vintage style */
+.auth-hint {
+  margin-top: 14px;
+  text-align: center;
+}
+
+.auth-hint small {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #b4a89c;
+  background: #f5f0eb;
+  padding: 4px 14px;
+  border: 1px solid #d4c8bc;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+/* Error Messages - vintage style */
 .auth-error {
   background: #fcf0ec;
   border: 2px solid #c44a3a;
@@ -225,6 +363,64 @@
   left: 0;
 }
 
+/* ===== AUTH TABS - Vintage Style ===== */
+.auth-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin: 12px 0 4px;
+  border: 2px solid #d4c8bc;
+  overflow: hidden;
+  background: #f5f0eb;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.auth-tab:first-child {
+  border-right: 1px solid #d4c8bc;
+}
+
+.auth-tab:hover {
+  background: #fcf8f4;
+  color: #1a2a3a;
+}
+
+.auth-tab.active {
+  background: #1a2a3a;
+  color: #f5f0eb;
+}
+
+.auth-tab.active:hover {
+  background: #1a2a3a;
+  color: #f5f0eb;
+}
+
+/* Tab icon spacing */
+.auth-tab .tab-icon {
+  margin-right: 6px;
+}
+
+/* Responsive tabs */
+@media (max-width: 480px) {
+  .auth-tab {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .auth-card {
@@ -233,5 +429,39 @@
 
   .auth-title {
     font-size: 24px;
+  }
+
+  .auth-input {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .btn-primary {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .auth-divider span {
+    font-size: 10px;
+    padding: 0 12px;
+  }
+
+  .link-button {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .admin-badge {
+    font-size: 12px;
+    padding: 4px 16px;
+  }
+
+  .auth-hint small {
+    font-size: 10px;
+    padding: 3px 12px;
+  }
+
+  .link-button.admin-toggle {
+    padding: 4px 16px;
   }
 }
