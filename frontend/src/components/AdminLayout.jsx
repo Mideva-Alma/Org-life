@@ -13,11 +13,18 @@ export default function AdminLayout({ children, title, subtitle }) {
 
   const adminEmail = localStorage.getItem('email') || '';
 
-  async function handleSignOut() {
-    await api.logout();
-    navigate("/");
+ async function handleSignOut() {
+  try {
+    await api.logout().catch(() => {});
+  } catch (error) {
+    // Ignore
+  } finally {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('email');
+    navigate("/auth");
   }
-
+}
   return (
     <div className="dashboard">
       <aside className="sidebar">

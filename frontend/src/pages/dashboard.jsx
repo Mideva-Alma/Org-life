@@ -43,8 +43,17 @@ export default function Dashboard() {
   }
 
   async function handleSignOut() {
-    await api.logout();
-    navigate("/");
+    try {
+      await api.logout();
+      navigate("/");
+    } catch (error) {
+      // console.error('Error signing out:', error);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      localStorage.removeItem('email');
+      navigate("/auth");
+    }
   }
 
   const totalIncome = income.reduce((sum, item) => sum + parseFloat(item.amount), 0);
