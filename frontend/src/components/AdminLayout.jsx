@@ -1,32 +1,37 @@
+// frontend/src/components/AdminLayout.jsx
 import { useNavigate, useLocation } from "react-router-dom";
+import { FiHome, FiUsers, FiDollarSign, FiLogOut } from "react-icons/fi";
+import { FaChartBar } from "react-icons/fa";
 import api from "../services/api";
+import "../pages/admin.css";
 
 export default function AdminLayout({ children, title, subtitle }) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const navItems = [
-    { path: "/admin", label: "Overview", icon: "📊" },
-    { path: "/admin/users", label: "Users", icon: "👥" },
-    { path: "/admin/transactions", label: "Transactions", icon: "💰" },
+    { path: "/admin", label: "Overview", icon: <FaChartBar /> },
+    { path: "/admin/users", label: "Users", icon: <FiUsers /> },
+    { path: "/admin/transactions", label: "Transactions", icon: <FiDollarSign /> },
   ];
 
   const adminEmail = localStorage.getItem('email') || '';
 
- async function handleSignOut() {
-  try {
-    await api.logout().catch(() => {});
-  } catch (error) {
-    // Ignore
-  } finally {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('email');
-    navigate("/auth");
+  async function handleSignOut() {
+    try {
+      await api.logout().catch(() => {});
+    } catch (error) {
+      // Ignore
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      localStorage.removeItem('email');
+      navigate("/auth");
+    }
   }
-}
+
   return (
-    <div className="dashboard">
+    <div className="admin-dashboard-layout">
       <aside className="sidebar">
         <div className="sidebar-brand">
           <span className="brand-icon">⚓</span>
@@ -55,7 +60,7 @@ export default function AdminLayout({ children, title, subtitle }) {
             </div>
           </div>
           <button className="signout-btn" onClick={handleSignOut}>
-            Sign Out
+            <FiLogOut /> Sign Out
           </button>
         </div>
       </aside>
@@ -67,7 +72,9 @@ export default function AdminLayout({ children, title, subtitle }) {
             <p className="dashboard-subtitle">{subtitle}</p>
           </div>
         </header>
-        {children}
+        <div className="admin-content">
+          {children}
+        </div>
       </main>
     </div>
   );

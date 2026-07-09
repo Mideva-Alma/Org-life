@@ -14,6 +14,8 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
+import { FiPlus, FiEdit2, FiTrash2, FiDollarSign, FiTrendingUp, FiTrendingDown, FiCalendar, FiTarget } from "react-icons/fi";
+import { FaMoneyBillWave, FaChartPie, FaChartLine } from "react-icons/fa";
 import api from "../services/api";
 import "./Income.css";
 

@@ -13,6 +13,8 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
+import { FiUsers, FiUserCheck, FiUserX, FiDollarSign, FiTrendingUp, FiTrendingDown, FiActivity } from "react-icons/fi";
+import { FaUserTie } from "react-icons/fa";
 import api from "../services/api";
 import AdminLayout from "../components/AdminLayout";
 import "./Admin.css";
@@ -340,21 +342,21 @@ export default function AdminDashboard() {
       subtitle={`${stats.totalUsers} users • ${stats.totalTransactions} transactions`}
     >
       {/* Stats Cards */}
-      <div className="admin-stats">
+       <div className="admin-stats">
         <div className="stat-card">
-          <h3>👥 Total Users</h3>
+          <h3><FiUsers /> Total Users</h3>
           <p className="stat-number">{stats.totalUsers}</p>
         </div>
         <div className="stat-card verified">
-          <h3>✅ Verified</h3>
+          <h3><FiUserCheck /> Verified</h3>
           <p className="stat-number">{stats.totalVerified}</p>
         </div>
         <div className="stat-card">
-          <h3>💰 Total Income</h3>
+          <h3><FiTrendingUp /> Total Income</h3>
           <p className="stat-number">KES {stats.totalIncome.toFixed(2)}</p>
         </div>
         <div className="stat-card inactive">
-          <h3>📉 Total Expenses</h3>
+          <h3><FiTrendingDown /> Total Expenses</h3>
           <p className="stat-number">KES {stats.totalExpenses.toFixed(2)}</p>
         </div>
       </div>
