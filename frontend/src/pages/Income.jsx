@@ -14,8 +14,12 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
-import { FiPlus, FiEdit2, FiTrash2, FiDollarSign, FiTrendingUp, FiTrendingDown, FiCalendar, FiTarget } from "react-icons/fi";
-import { FaMoneyBillWave, FaChartPie, FaChartLine } from "react-icons/fa";
+import { 
+  FiPlus, FiEdit2, FiTrash2, FiDollarSign, FiTrendingUp, FiTrendingDown, 
+  FiCalendar, FiTarget, FiX, FiSave, FiBarChart2, FiPieChart, FiTrendingUp as FiLineChart,
+  FiCheckCircle, FiAlertCircle, FiList, FiTag
+} from "react-icons/fi";
+import { FaMoneyBillWave, FaChartPie, FaChartLine, FaAnchor } from "react-icons/fa";
 import api from "../services/api";
 import "./Income.css";
 
@@ -31,7 +35,7 @@ ChartJS.register(
   LineElement
 );
 
-export default function Income({ onDataChange }) { // ✅ ADDED onDataChange prop
+export default function Income({ onDataChange }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -166,7 +170,6 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
       resetForm();
       await fetchIncome();
       
-      // ✅ Refresh dashboard data
       if (onDataChange) {
         onDataChange();
       }
@@ -184,7 +187,6 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
       await api.deleteIncome(id);
       await fetchIncome();
       
-      // ✅ Refresh dashboard data
       if (onDataChange) {
         onDataChange();
       }
@@ -373,35 +375,36 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
       {/* Header */}
       <div className="income-header">
         <div>
-          <h1 className="income-title">💰 Income</h1>
+          <h1 className="income-title"><FaMoneyBillWave /> Income</h1>
           <p className="income-subtitle">Track your earnings</p>
         </div>
         <button 
           className="add-income-btn"
           onClick={toggleForm}
         >
-          {showAddForm ? '✕ Cancel' : '+ Add Income'}
+          {showAddForm ? <FiX /> : <FiPlus />}
+          {showAddForm ? ' Cancel' : ' Add Income'}
         </button>
       </div>
 
       {/* Stats Cards */}
       <div className="income-stats">
         <div className="stat-card total">
-          <span className="stat-label">Total Income</span>
+          <span className="stat-label"><FiDollarSign /> Total Income</span>
           <span className="stat-value">{user?.currency || 'KES'} {totalIncome.toFixed(2)}</span>
         </div>
         <div className="stat-card count">
-          <span className="stat-label">Transactions</span>
+          <span className="stat-label"><FiTrendingUp /> Transactions</span>
           <span className="stat-value">{transactions.length}</span>
         </div>
         <div className="stat-card net">
-          <span className="stat-label">Net Balance</span>
+          <span className="stat-label"><FiTrendingDown /> Net Balance</span>
           <span className={`stat-value ${netBalance >= 0 ? 'positive' : 'negative'}`}>
             {user?.currency || 'KES'} {netBalance.toFixed(2)}
           </span>
         </div>
         <div className="stat-card goal">
-          <span className="stat-label">Income Goal</span>
+          <span className="stat-label"><FiTarget /> Income Goal</span>
           <div className="goal-container">
             {incomeGoal ? (
               <>
@@ -410,11 +413,11 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
                   <div className="goal-progress" style={{ width: `${goalProgress}%` }} />
                 </div>
                 <span className="goal-percentage">{goalProgress.toFixed(0)}%</span>
-                <button className="goal-edit-btn" onClick={() => setShowGoalInput(!showGoalInput)}>✏️</button>
+                <button className="goal-edit-btn" onClick={() => setShowGoalInput(!showGoalInput)}><FiEdit2 /></button>
               </>
             ) : (
               <button className="goal-set-btn" onClick={() => setShowGoalInput(true)}>
-                + Set Goal
+                <FiPlus /> Set Goal
               </button>
             )}
           </div>
@@ -424,7 +427,7 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
       {/* Goal Input */}
       {showGoalInput && (
         <div className="goal-input-container">
-          <label>Set Monthly Income Goal</label>
+          <label><FiTarget /> Set Monthly Income Goal</label>
           <div className="goal-input-row">
             <input
               type="number"
@@ -433,8 +436,8 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
               onChange={(e) => setIncomeGoal(e.target.value)}
               className="goal-input"
             />
-            <button className="goal-save-btn" onClick={handleGoalSave}>Save</button>
-            <button className="goal-cancel-btn" onClick={() => setShowGoalInput(false)}>Cancel</button>
+            <button className="goal-save-btn" onClick={handleGoalSave}><FiSave /> Save</button>
+            <button className="goal-cancel-btn" onClick={() => setShowGoalInput(false)}><FiX /> Cancel</button>
           </div>
         </div>
       )}
@@ -442,11 +445,11 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
       {/* ===== ADD/EDIT FORM ===== */}
       {showAddForm && (
         <div className="add-income-form">
-          <h3>{editingId ? '✏️ Edit Income' : '➕ Add New Income'}</h3>
+          <h3>{editingId ? <FiEdit2 /> : <FiPlus />} {editingId ? ' Edit Income' : ' Add New Income'}</h3>
           <form onSubmit={handleAddIncome}>
             <div className="form-row">
               <div className="form-group">
-                <label>Amount *</label>
+                <label><FiDollarSign /> Amount *</label>
                 <input
                   type="number"
                   placeholder="e.g., 50000"
@@ -458,7 +461,7 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
                 />
               </div>
               <div className="form-group">
-                <label>Date</label>
+                <label><FiCalendar /> Date</label>
                 <input
                   type="date"
                   value={newIncome.income_date}
@@ -467,7 +470,7 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
               </div>
             </div>
             <div className="form-group">
-              <label>Source *</label>
+              <label><FiTag /> Source *</label>
               <select
                 value={newIncome.source}
                 onChange={(e) => setNewIncome({ ...newIncome, source: e.target.value })}
@@ -485,7 +488,7 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
               </select>
             </div>
             <div className="form-group">
-              <label>Description</label>
+              <label><FiList /> Description</label>
               <input
                 type="text"
                 placeholder="Add a note (optional)"
@@ -495,10 +498,10 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
             </div>
             <div className="form-actions">
               <button type="button" className="cancel-btn" onClick={resetForm}>
-                Cancel
+                <FiX /> Cancel
               </button>
               <button type="submit" className="save-btn">
-                {editingId ? '💾 Update Income' : '💾 Save Income'}
+                <FiSave /> {editingId ? ' Update Income' : ' Save Income'}
               </button>
             </div>
           </form>
@@ -509,15 +512,15 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
       <div className="charts-grid">
         {/* Income vs Expenses Comparison */}
         <div className="chart-card">
-          <h3>📊 Income vs Expenses</h3>
+          <h3><FiBarChart2 /> Income vs Expenses</h3>
           <div className="chart-wrapper">
             <Bar data={comparisonData} options={chartOptions} />
           </div>
           <div className="chart-insight">
             {netBalance >= 0 ? (
-              <span className="insight-positive">✅ You're in the green! Keep it up!</span>
+              <span className="insight-positive"><FiCheckCircle /> You're in the green! Keep it up!</span>
             ) : (
-              <span className="insight-negative">⚠️ You're spending more than you earn. Time to cut back!</span>
+              <span className="insight-negative"><FiAlertCircle /> You're spending more than you earn. Time to cut back!</span>
             )}
           </div>
         </div>
@@ -525,7 +528,7 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
         {/* Income Sources Pie */}
         {sourceLabels.length > 0 && (
           <div className="chart-card">
-            <h3>🥧 Income Sources</h3>
+            <h3><FiPieChart /> Income Sources</h3>
             <div className="chart-wrapper">
               <Pie data={pieChartData} options={pieOptions} />
             </div>
@@ -535,7 +538,7 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
         {/* Monthly Trend */}
         {monthLabels.length > 0 && (
           <div className="chart-card">
-            <h3>📈 Monthly Trend</h3>
+            <h3><FiLineChart /> Monthly Trend</h3>
             <div className="chart-wrapper">
               <Line data={trendChartData} options={chartOptions} />
             </div>
@@ -545,11 +548,11 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
 
       {/* ===== INCOME LIST ===== */}
       <div className="income-list">
-        <h3 className="list-title">📋 Income History</h3>
+        <h3 className="list-title"><FiList /> Income History</h3>
         {transactions.length === 0 ? (
           <div className="empty-state">
             <p>No income recorded yet</p>
-            <p className="empty-hint">Click "+ Add Income" to start tracking!</p>
+            <p className="empty-hint"><FiPlus /> Click "Add Income" to start tracking!</p>
           </div>
         ) : (
           transactions.map((transaction) => (
@@ -562,7 +565,7 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
                   {getSourceIcon(transaction.source || transaction.description || 'Other')} {transaction.source || transaction.description || 'Other'}
                 </span>
                 <span className="income-date">
-                  {new Date(transaction.income_date || transaction.created_at).toLocaleDateString()}
+                  <FiCalendar /> {new Date(transaction.income_date || transaction.created_at).toLocaleDateString()}
                 </span>
               </div>
               
@@ -572,14 +575,14 @@ export default function Income({ onDataChange }) { // ✅ ADDED onDataChange pro
                   onClick={() => startEditing(transaction)}
                   title="Edit income"
                 >
-                  ✏️
+                  <FiEdit2 />
                 </button>
                 <button 
                   className="delete-btn"
                   onClick={() => handleDelete(transaction.id)}
                   title="Delete income"
                 >
-                  ✕
+                  <FiTrash2 />
                 </button>
               </div>
             </div>

@@ -13,8 +13,13 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
-import { FiUsers, FiUserCheck, FiUserX, FiDollarSign, FiTrendingUp, FiTrendingDown, FiActivity } from "react-icons/fi";
-import { FaUserTie } from "react-icons/fa";
+import { 
+  FiUsers, FiUserCheck, FiDollarSign, FiTrendingUp, FiTrendingDown, 
+  FiBarChart2, FiPieChart, FiTrendingUp as FiLineChart, FiList,
+  FiUser, FiCheckCircle, FiAlertCircle, FiCalendar, FiActivity,
+  FiAward, FiShield, FiSettings, FiArrowUp, FiArrowDown
+} from "react-icons/fi";
+import { FaUserTie, FaCrown, FaChartPie, FaChartLine } from "react-icons/fa";
 import api from "../services/api";
 import AdminLayout from "../components/AdminLayout";
 import "./Admin.css";
@@ -342,7 +347,7 @@ export default function AdminDashboard() {
       subtitle={`${stats.totalUsers} users • ${stats.totalTransactions} transactions`}
     >
       {/* Stats Cards */}
-       <div className="admin-stats">
+      <div className="admin-stats">
         <div className="stat-card">
           <h3><FiUsers /> Total Users</h3>
           <p className="stat-number">{stats.totalUsers}</p>
@@ -361,71 +366,71 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="error-message"><FiAlertCircle /> {error}</p>}
 
       {/* Charts Grid */}
       <div className="admin-charts-grid">
         {/* Top Users by Expenses */}
         <div className="chart-card admin-chart">
-          <h3>💸 Top Users by Expenses</h3>
+          <h3><FiTrendingDown /> Top Users by Expenses</h3>
           <div className="chart-wrapper">
             {userActivityData && <Bar data={userActivityData} options={barOptions} />}
           </div>
-          <p className="chart-hint">Showing users with highest spending</p>
+          <p className="chart-hint"><FiUsers /> Showing users with highest spending</p>
         </div>
 
         {/* Income vs Expenses */}
         <div className="chart-card admin-chart">
-          <h3>📊 Income vs Expenses</h3>
+          <h3><FiPieChart /> Income vs Expenses</h3>
           <div className="chart-wrapper">
             {transactionTypeData && <Pie data={transactionTypeData} options={pieOptions} />}
           </div>
           <p className="chart-hint">
-            Income: KES {stats.totalIncome.toFixed(2)} | 
-            Expenses: KES {stats.totalExpenses.toFixed(2)}
+            <FiTrendingUp /> Income: KES {stats.totalIncome.toFixed(2)} | 
+            <FiTrendingDown /> Expenses: KES {stats.totalExpenses.toFixed(2)}
           </p>
         </div>
 
         {/* Monthly Trend */}
         <div className="chart-card admin-chart full-width">
-          <h3>📈 Monthly Trend</h3>
+          <h3><FiLineChart /> Monthly Trend</h3>
           <div className="chart-wrapper large">
             {monthlyTrendData && <Line data={monthlyTrendData} options={lineOptions} />}
           </div>
-          <p className="chart-hint">Income vs Expenses over time</p>
+          <p className="chart-hint"><FiCalendar /> Income vs Expenses over time</p>
         </div>
 
         {/* Quick Stats */}
         <div className="chart-card admin-chart full-width">
-          <h3>📋 System Overview</h3>
+          <h3><FiList /> System Overview</h3>
           <div className="quick-stats-grid">
             <div className="quick-stat">
-              <span className="stat-icon">👥</span>
+              <span className="stat-icon"><FiUsers /></span>
               <span className="stat-label">Total Users</span>
               <span className="stat-value">{stats.totalUsers}</span>
             </div>
             <div className="quick-stat">
-              <span className="stat-icon">👑</span>
+              <span className="stat-icon"><FaUserTie /></span>
               <span className="stat-label">Admins</span>
               <span className="stat-value">{stats.totalAdmins}</span>
             </div>
             <div className="quick-stat">
-              <span className="stat-icon">✅</span>
+              <span className="stat-icon"><FiCheckCircle /></span>
               <span className="stat-label">Verified</span>
               <span className="stat-value">{stats.totalVerified}</span>
             </div>
             <div className="quick-stat">
-              <span className="stat-icon">📝</span>
+              <span className="stat-icon"><FiActivity /></span>
               <span className="stat-label">Transactions</span>
               <span className="stat-value">{stats.totalTransactions}</span>
             </div>
             <div className="quick-stat">
-              <span className="stat-icon">⚠️</span>
+              <span className="stat-icon"><FiAlertCircle /></span>
               <span className="stat-label">Inactive Users</span>
               <span className="stat-value">{stats.totalInactive}</span>
             </div>
             <div className="quick-stat">
-              <span className="stat-icon">💹</span>
+              <span className="stat-icon"><FiDollarSign /></span>
               <span className="stat-label">Net Balance</span>
               <span className={`stat-value ${(stats.totalIncome - stats.totalExpenses) >= 0 ? 'positive' : 'negative'}`}>
                 KES {(stats.totalIncome - stats.totalExpenses).toFixed(2)}

@@ -1,6 +1,12 @@
 // frontend/src/pages/Dashboard.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  FiHome, FiTrendingDown, FiDollarSign, FiAward, FiUser, 
+  FiLogOut, FiMenu, FiX, FiTrendingUp, FiAnchor, FiCalendar,
+  FiCheckCircle, FiAlertCircle
+} from "react-icons/fi";
+import { FaMoneyBillWave, FaChartLine } from "react-icons/fa";
 import api from "../services/api";
 import Home from "./Home";
 import Expenses from "./Expenses";
@@ -20,7 +26,7 @@ export default function Dashboard() {
   const [tourComplete, setTourComplete] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // ✅ FETCH DATA FUNCTION
+  // FETCH DATA FUNCTION
   const fetchDashboardData = async () => {
     try {
       const userData = await api.getCurrentUser();
@@ -39,7 +45,7 @@ export default function Dashboard() {
     }
   };
 
-  // ✅ REFRESH FUNCTION - call this after adding/deleting
+  // REFRESH FUNCTION - call this after adding/deleting
   const refreshData = () => {
     fetchDashboardData();
   };
@@ -85,9 +91,9 @@ export default function Dashboard() {
       case 'home':
         return <Home />;
       case 'expenses':
-        return <Expenses onDataChange={refreshData} />; // ✅ PASS REFRESH
+        return <Expenses onDataChange={refreshData} />;
       case 'income':
-        return <Income onDataChange={refreshData} />; // ✅ PASS REFRESH
+        return <Income onDataChange={refreshData} />;
       case 'categories':
         return <Categories />;
       case 'profile':
@@ -113,7 +119,7 @@ export default function Dashboard() {
 
       {/* Mobile toggle button */}
       <button className="mobile-toggle" onClick={toggleSidebar}>
-        ☰
+        {sidebarOpen ? <FiX /> : <FiMenu />}
       </button>
 
       {/* Sidebar overlay */}
@@ -125,7 +131,7 @@ export default function Dashboard() {
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-brand">
-          <span className="brand-icon">⚓</span>
+          <span className="brand-icon"><FiAnchor /></span>
           <span className="brand-text">Org-Life</span>
         </div>
 
@@ -134,35 +140,35 @@ export default function Dashboard() {
             className={`nav-item ${currentPage === 'home' ? 'active' : ''}`}
             onClick={() => handleNavClick('home')}
           >
-            <span className="nav-icon">🏠</span>
+            <span className="nav-icon"><FiHome /></span>
             Home
           </button>
           <button 
             className={`nav-item ${currentPage === 'expenses' ? 'active' : ''}`}
             onClick={() => handleNavClick('expenses')}
           >
-            <span className="nav-icon">📉</span>
+            <span className="nav-icon"><FiTrendingDown /></span>
             Expenses
           </button>
           <button 
             className={`nav-item ${currentPage === 'income' ? 'active' : ''}`}
             onClick={() => handleNavClick('income')}
           >
-            <span className="nav-icon">💰</span>
+            <span className="nav-icon"><FaMoneyBillWave /></span>
             Income
           </button>
           <button 
             className={`nav-item ${currentPage === 'categories' ? 'active' : ''}`}
             onClick={() => handleNavClick('categories')}
           >
-            <span className="nav-icon">🏆</span>
+            <span className="nav-icon"><FiAward /></span>
             Rankings
           </button>
           <button 
             className={`nav-item ${currentPage === 'profile' ? 'active' : ''}`}
             onClick={() => handleNavClick('profile')}
           >
-            <span className="nav-icon">👤</span>
+            <span className="nav-icon"><FiUser /></span>
             Profile
           </button>
         </nav>
@@ -178,7 +184,7 @@ export default function Dashboard() {
             </div>
           </div>
           <button className="signout-btn" onClick={handleSignOut}>
-            Sign Out
+            <FiLogOut /> Sign Out
           </button>
         </div>
       </aside>
@@ -192,7 +198,7 @@ export default function Dashboard() {
             <div className="stats-grid" id="stats-grid">
               <div className="stat-card balance" id="stat-balance">
                 <div className="stat-header">
-                  <span className="stat-icon">💰</span>
+                  <span className="stat-icon"><FaMoneyBillWave /></span>
                   <span className="stat-label">Balance</span>
                 </div>
                 <p className={`stat-value ${balance >= 0 ? 'positive' : 'negative'}`}>
@@ -202,7 +208,7 @@ export default function Dashboard() {
 
               <div className="stat-card income">
                 <div className="stat-header">
-                  <span className="stat-icon">📈</span>
+                  <span className="stat-icon"><FiTrendingUp /></span>
                   <span className="stat-label">Income</span>
                 </div>
                 <p className="stat-value income-text">
@@ -212,7 +218,7 @@ export default function Dashboard() {
 
               <div className="stat-card expense">
                 <div className="stat-header">
-                  <span className="stat-icon">📉</span>
+                  <span className="stat-icon"><FiTrendingDown /></span>
                   <span className="stat-label">Expenses</span>
                 </div>
                 <p className="stat-value expense-text">
@@ -224,18 +230,18 @@ export default function Dashboard() {
             {/* Recent Expenses */}
             <section className="recent-section" id="recent-section">
               <div className="section-header">
-                <h2>Recent Expenses</h2>
+                <h2><FiTrendingDown /> Recent Expenses</h2>
               </div>
               <div className="ledger-list">
                 {expenses.length === 0 ? (
-                  <p className="empty-state">No expenses recorded yet.</p>
+                  <p className="empty-state"><FiAlertCircle /> No expenses recorded yet.</p>
                 ) : (
                   expenses.map((expense) => (
                     <div key={expense.id} className="ledger-item">
                       <div>
                         <p className="ledger-category">{expense.category || 'Uncategorized'}</p>
                         <p className="ledger-date">
-                          {expense.expense_date || new Date(expense.created_at).toLocaleDateString()}
+                          <FiCalendar /> {expense.expense_date || new Date(expense.created_at).toLocaleDateString()}
                         </p>
                       </div>
                       <p className="ledger-amount expense-text">
@@ -250,11 +256,11 @@ export default function Dashboard() {
             {/* Recent Income */}
             <section className="recent-section">
               <div className="section-header">
-                <h2>Recent Income</h2>
+                <h2><FaMoneyBillWave /> Recent Income</h2>
               </div>
               <div className="ledger-list">
                 {income.length === 0 ? (
-                  <p className="empty-state">No income recorded yet.</p>
+                  <p className="empty-state"><FiAlertCircle /> No income recorded yet.</p>
                 ) : (
                   income.map((item) => (
                     <div key={item.id} className="ledger-item">
@@ -263,7 +269,7 @@ export default function Dashboard() {
                           {item.source || item.description || 'Income'}
                         </p>
                         <p className="ledger-date">
-                          {item.income_date || new Date(item.created_at).toLocaleDateString()}
+                          <FiCalendar /> {item.income_date || new Date(item.created_at).toLocaleDateString()}
                         </p>
                       </div>
                       <p className="ledger-amount income-text">

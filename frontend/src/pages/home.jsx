@@ -1,3 +1,4 @@
+// frontend/src/pages/Home.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -13,10 +14,15 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
+import { 
+  FiCalendar, FiDollarSign, FiTrendingUp, FiTrendingDown, 
+  FiPlus, FiX, FiSave, FiBarChart2, FiPieChart, FiTrendingUp as FiLineChart,
+  FiCheckCircle, FiAlertCircle, FiList, FiTag, FiFolder, FiEdit2
+} from "react-icons/fi";
+import { FaMoneyBillWave, FaChartPie, FaChartLine, FaAnchor } from "react-icons/fa";
 import api from "../services/api";
 import "./Home.css";
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -42,7 +48,6 @@ export default function Home() {
   const [newCategory, setNewCategory] = useState("");
   const [newCategoryBudget, setNewCategoryBudget] = useState("");
   
-  // Graph states
   const [chartType, setChartType] = useState('bar');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showGraph, setShowGraph] = useState(true);
@@ -59,29 +64,24 @@ export default function Home() {
       setUser(userData);
       console.log("✅ User data loaded:", userData);
 
-      // Get expenses and income
       const expenses = await api.getExpenses();
       const income = await api.getIncome();
       
       console.log("📊 Expenses loaded:", expenses.length);
       console.log("💰 Income loaded:", income.length);
       
-      // Calculate weekly spending and daily breakdown
       const { weeklyTotal: weeklyExpenses, dailyData } = getWeeklyData(expenses);
       setWeeklySpending(weeklyExpenses);
       setDailySpending(dailyData);
       console.log("📉 Weekly spending:", weeklyExpenses);
 
-      // Calculate weekly income
       const weeklyIncomeTotal = getWeeklyIncome(income);
       setWeeklyIncome(weeklyIncomeTotal);
       console.log("📈 Weekly income:", weeklyIncomeTotal);
 
-      // Get categories
       const categoryList = getCategoryList(expenses);
       setCategories(categoryList);
 
-      // Load saved weekly budget
       const savedBudget = localStorage.getItem('orglife_weekly_budget');
       if (savedBudget) {
         setWeeklyBudget(parseFloat(savedBudget));
@@ -97,11 +97,10 @@ export default function Home() {
     }
   }
 
-  // Get weekly data (Monday to Sunday)
   function getWeeklyData(expenses) {
     const now = new Date();
     const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
     
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const dailyTotal = {};
@@ -128,7 +127,6 @@ export default function Home() {
     return { weeklyTotal, dailyData };
   }
 
-  // Get weekly income
   function getWeeklyIncome(income) {
     const now = new Date();
     const startOfWeek = new Date(now);
@@ -146,7 +144,6 @@ export default function Home() {
     return weeklyTotal;
   }
 
-  // Get unique categories from expenses
   function getCategoryList(expenses) {
     const categoryMap = {};
     
@@ -166,7 +163,6 @@ export default function Home() {
     return Object.values(categoryMap).sort((a, b) => b.total - a.total);
   }
 
-  // Chart data
   const getChartData = () => {
     const labels = dailySpending.map(d => d.day);
     const values = dailySpending.map(d => d.amount);
@@ -279,20 +275,17 @@ export default function Home() {
     }
   };
 
-  // Calculate spending percentage
   const spendingPercentage = Math.min((weeklySpending / weeklyBudget) * 100, 100);
   const isOverBudget = weeklySpending > weeklyBudget;
   const remaining = weeklyBudget - weeklySpending;
   const netBalance = weeklyIncome - weeklySpending;
 
-  // Handle budget update
   function handleBudgetUpdate(e) {
     const newBudget = parseFloat(e.target.value);
     setWeeklyBudget(newBudget);
     localStorage.setItem('orglife_weekly_budget', newBudget);
   }
 
-  // Handle add category
   function handleAddCategory() {
     if (!newCategory.trim() || !newCategoryBudget) {
       alert("Please fill in both category name and budget");
@@ -335,7 +328,7 @@ export default function Home() {
       <section className="weekly-section">
         <div className="weekly-header">
           <div>
-            <h2 className="weekly-title">📅 This Week's Budget</h2>
+            <h2 className="weekly-title"><FiCalendar /> This Week's Budget</h2>
             <p className="weekly-subtitle">
               {user?.full_name?.split(' ')[0] || 'User'}, here's your spending progress
             </p>
@@ -355,15 +348,15 @@ export default function Home() {
         {/* ===== INCOME SUMMARY ===== */}
         <div className="income-summary">
           <div className="income-item">
-            <span className="income-label">💰 Weekly Income</span>
+            <span className="income-label"><FaMoneyBillWave /> Weekly Income</span>
             <span className="income-value">{user?.currency || 'KES'} {weeklyIncome.toFixed(2)}</span>
           </div>
           <div className="income-item">
-            <span className="income-label">📉 Weekly Spending</span>
+            <span className="income-label"><FiTrendingDown /> Weekly Spending</span>
             <span className="income-value expense-text">{user?.currency || 'KES'} {weeklySpending.toFixed(2)}</span>
           </div>
           <div className="income-item">
-            <span className="income-label">📊 Net Balance</span>
+            <span className="income-label"><FiTrendingUp /> Net Balance</span>
             <span className={`income-value ${netBalance >= 0 ? 'positive' : 'negative'}`}>
               {user?.currency || 'KES'} {netBalance.toFixed(2)}
             </span>
@@ -382,7 +375,8 @@ export default function Home() {
               {user?.currency || 'KES'} {weeklyBudget.toFixed(2)}
             </span>
             <span className={`progress-status ${isOverBudget ? 'over' : 'under'}`}>
-              {isOverBudget ? '⚠️ Over Budget' : '✅ On Track'}
+              {isOverBudget ? <FiAlertCircle /> : <FiCheckCircle />}
+              {isOverBudget ? ' Over Budget' : ' On Track'}
             </span>
           </div>
 
@@ -396,11 +390,11 @@ export default function Home() {
           <div className="progress-remaining">
             {isOverBudget ? (
               <span className="over-text">
-                ⚠️ You've exceeded your budget by {user?.currency || 'KES'} {Math.abs(remaining).toFixed(2)}
+                <FiAlertCircle /> You've exceeded your budget by {user?.currency || 'KES'} {Math.abs(remaining).toFixed(2)}
               </span>
             ) : (
               <span className="under-text">
-                ✅ You have {user?.currency || 'KES'} {remaining.toFixed(2)} remaining
+                <FiCheckCircle /> You have {user?.currency || 'KES'} {remaining.toFixed(2)} remaining
               </span>
             )}
           </div>
@@ -411,7 +405,7 @@ export default function Home() {
       <section className="graph-section">
         <div className="graph-header">
           <div className="graph-title-group">
-            <h2 className="graph-title">📊 Spending Overview</h2>
+            <h2 className="graph-title"><FiBarChart2 /> Spending Overview</h2>
             <button 
               className="toggle-graph-btn"
               onClick={() => setShowGraph(!showGraph)}
@@ -426,24 +420,24 @@ export default function Home() {
                 className={`chart-btn ${chartType === 'bar' ? 'active' : ''}`}
                 onClick={() => setChartType('bar')}
               >
-                📊 Bar
+                <FiBarChart2 /> Bar
               </button>
               <button 
                 className={`chart-btn ${chartType === 'line' ? 'active' : ''}`}
                 onClick={() => setChartType('line')}
               >
-                📈 Line
+                <FiLineChart /> Line
               </button>
               <button 
                 className={`chart-btn ${chartType === 'pie' ? 'active' : ''}`}
                 onClick={() => setChartType('pie')}
               >
-                🥧 Pie
+                <FiPieChart /> Pie
               </button>
             </div>
 
             <div className="category-filter">
-              <label>Filter:</label>
+              <label><FiTag /> Filter:</label>
               <select 
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
@@ -463,7 +457,7 @@ export default function Home() {
           <div className="graph-container">
             {dailySpending.every(d => d.amount === 0) ? (
               <div className="empty-graph">
-                <p>📭 No spending data this week</p>
+                <p><FiAlertCircle /> No spending data this week</p>
                 <p className="empty-hint">Start tracking your expenses to see your spending patterns!</p>
               </div>
             ) : (
@@ -482,21 +476,22 @@ export default function Home() {
 
                 <div className="chart-stats">
                   <div className="stat-item">
-                    <span className="stat-label">Total Spent:</span>
+                    <span className="stat-label"><FiDollarSign /> Total Spent:</span>
                     <span className="stat-value">
                       {user?.currency || 'KES'} {weeklySpending.toFixed(2)}
                     </span>
                   </div>
                   <div className="stat-item">
-                    <span className="stat-label">Daily Average:</span>
+                    <span className="stat-label"><FiTrendingUp /> Daily Average:</span>
                     <span className="stat-value">
                       {user?.currency || 'KES'} {(weeklySpending / 7).toFixed(2)}
                     </span>
                   </div>
                   <div className="stat-item">
-                    <span className="stat-label">Budget Status:</span>
+                    <span className="stat-label"><FiCheckCircle /> Budget Status:</span>
                     <span className={`stat-value ${isOverBudget ? 'over' : 'under'}`}>
-                      {isOverBudget ? '⚠️ Over' : '✅ On Track'}
+                      {isOverBudget ? <FiAlertCircle /> : <FiCheckCircle />}
+                      {isOverBudget ? ' Over' : ' On Track'}
                     </span>
                   </div>
                 </div>
@@ -509,12 +504,13 @@ export default function Home() {
       {/* ===== BOTTOM SECTION: Categories ===== */}
       <section className="categories-section">
         <div className="categories-header">
-          <h2 className="categories-title">📂 Your Categories</h2>
+          <h2 className="categories-title"><FiFolder /> Your Categories</h2>
           <button 
             className="add-category-btn"
             onClick={() => setShowAddCategory(!showAddCategory)}
           >
-            {showAddCategory ? '✕ Cancel' : '+ Add Category'}
+            {showAddCategory ? <FiX /> : <FiPlus />}
+            {showAddCategory ? ' Cancel' : ' Add Category'}
           </button>
         </div>
 
@@ -538,7 +534,7 @@ export default function Home() {
               className="save-category-btn"
               onClick={handleAddCategory}
             >
-              Save Category
+              <FiSave /> Save Category
             </button>
           </div>
         )}
@@ -546,8 +542,8 @@ export default function Home() {
         <div className="categories-grid">
           {categories.length === 0 ? (
             <div className="empty-categories">
-              <p>No categories yet.</p>
-              <p className="empty-hint">Add your first category to start tracking!</p>
+              <p><FiAlertCircle /> No categories yet.</p>
+              <p className="empty-hint"><FiPlus /> Add your first category to start tracking!</p>
             </div>
           ) : (
             categories.map((category, index) => (
@@ -592,7 +588,6 @@ export default function Home() {
   );
 }
 
-// Helper: Get icon for category
 function getCategoryIcon(category) {
   const icons = {
     'Food': '🍔',

@@ -1,10 +1,16 @@
 // frontend/src/pages/Expenses.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  FiPlus, FiEdit2, FiTrash2, FiDollarSign, FiTrendingDown, 
+  FiCalendar, FiX, FiSave, FiCheckCircle, FiAlertCircle,
+  FiTag, FiList, FiFilter
+} from "react-icons/fi";
+import { FaMoneyBillWave } from "react-icons/fa";
 import api from "../services/api";
 import "./Expenses.css";
 
-export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange prop
+export default function Expenses({ onDataChange }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -111,7 +117,6 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
       resetForm();
       await fetchExpenses();
       
-      // ✅ Refresh dashboard data
       if (onDataChange) {
         onDataChange();
       }
@@ -126,7 +131,6 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
       await api.categorizeTransaction(transactionId, category);
       await fetchExpenses();
       
-      // ✅ Refresh dashboard data
       if (onDataChange) {
         onDataChange();
       }
@@ -144,7 +148,6 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
       await api.deleteTransaction(id);
       await fetchExpenses();
       
-      // ✅ Refresh dashboard data
       if (onDataChange) {
         onDataChange();
       }
@@ -185,38 +188,38 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
       {/* ===== STATS CARDS WITH ADD BUTTON ===== */}
       <div className="expenses-stats">
         <div className="stat-card">
-          <span className="stat-label">Total Spent</span>
+          <span className="stat-label"><FiDollarSign /> Total Spent</span>
           <span className="stat-value">{user?.currency || 'KES'} {totalExpenses.toFixed(2)}</span>
         </div>
         <div className="stat-card categorized">
-          <span className="stat-label">Categorized</span>
+          <span className="stat-label"><FiCheckCircle /> Categorized</span>
           <span className="stat-value">{user?.currency || 'KES'} {totalCategorized.toFixed(2)}</span>
         </div>
         <div className="stat-card uncategorized">
-          <span className="stat-label">Uncategorized</span>
+          <span className="stat-label"><FiAlertCircle /> Uncategorized</span>
           <span className="stat-value">{user?.currency || 'KES'} {totalUncategorized.toFixed(2)}</span>
         </div>
         <div className="stat-card count">
-          <span className="stat-label">Total Transactions</span>
+          <span className="stat-label"><FiList /> Total Transactions</span>
           <span className="stat-value">{transactions.length}</span>
         </div>
-        {/* 👇 ONLY BUTTON - RIGHT HERE IN THE STATS CARD */}
         <button 
           className="add-expense-btn"
           onClick={toggleForm}
         >
-          {showAddForm ? '✕ Cancel' : '+ Add Expense'}
+          {showAddForm ? <FiX /> : <FiPlus />}
+          {showAddForm ? ' Cancel' : ' Add Expense'}
         </button>
       </div>
 
       {/* ===== FORM ===== */}
       {showAddForm && (
         <div className="add-expense-form">
-          <h3>{editingId ? '✏️ Edit Expense' : '➕ Add New Expense'}</h3>
+          <h3>{editingId ? <FiEdit2 /> : <FiPlus />} {editingId ? ' Edit Expense' : ' Add New Expense'}</h3>
           <form onSubmit={handleAddExpense}>
             <div className="form-row">
               <div className="form-group">
-                <label>Amount *</label>
+                <label><FiDollarSign /> Amount *</label>
                 <input
                   type="number"
                   placeholder="e.g., 1500"
@@ -228,7 +231,7 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
                 />
               </div>
               <div className="form-group">
-                <label>Date</label>
+                <label><FiCalendar /> Date</label>
                 <input
                   type="date"
                   value={newExpense.transaction_date}
@@ -237,7 +240,7 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
               </div>
             </div>
             <div className="form-group">
-              <label>Description</label>
+              <label><FiTag /> Description</label>
               <input
                 type="text"
                 placeholder="What did you spend on?"
@@ -247,10 +250,10 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
             </div>
             <div className="form-actions">
               <button type="button" className="cancel-btn" onClick={resetForm}>
-                Cancel
+                <FiX /> Cancel
               </button>
               <button type="submit" className="save-btn">
-                {editingId ? '💾 Update Expense' : '💾 Save Expense'}
+                <FiSave /> {editingId ? ' Update Expense' : ' Save Expense'}
               </button>
             </div>
           </form>
@@ -264,19 +267,19 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
             className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
             onClick={() => setFilter('all')}
           >
-            All ({transactions.length})
+            <FiList /> All ({transactions.length})
           </button>
           <button 
             className={`filter-btn ${filter === 'categorized' ? 'active' : ''}`}
             onClick={() => setFilter('categorized')}
           >
-            Categorized ({transactions.filter(t => t.category).length})
+            <FiCheckCircle /> Categorized ({transactions.filter(t => t.category).length})
           </button>
           <button 
             className={`filter-btn ${filter === 'uncategorized' ? 'active' : ''}`}
             onClick={() => setFilter('uncategorized')}
           >
-            Uncategorized ({transactions.filter(t => !t.category).length})
+            <FiAlertCircle /> Uncategorized ({transactions.filter(t => !t.category).length})
           </button>
         </div>
       </div>
@@ -285,8 +288,8 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
       <div className="expenses-list">
         {filteredTransactions.length === 0 ? (
           <div className="empty-state">
-            <p>No expenses found</p>
-            <p className="empty-hint">Click "+ Add Expense" to start tracking!</p>
+            <p><FiAlertCircle /> No expenses found</p>
+            <p className="empty-hint"><FiPlus /> Click "Add Expense" to start tracking!</p>
           </div>
         ) : (
           filteredTransactions.map((transaction) => (
@@ -299,7 +302,7 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
                   {transaction.description || 'No description'}
                 </span>
                 <span className="expense-date">
-                  {new Date(transaction.created_at).toLocaleDateString()}
+                  <FiCalendar /> {new Date(transaction.created_at).toLocaleDateString()}
                 </span>
                 {transaction.category && (
                   <span className="expense-category-badge">
@@ -308,7 +311,7 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
                 )}
                 {!transaction.category && (
                   <span className="expense-category-badge uncategorized-badge">
-                    ⚠️ Uncategorized
+                    <FiAlertCircle /> Uncategorized
                   </span>
                 )}
               </div>
@@ -319,7 +322,7 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
                   onClick={() => startEditing(transaction)}
                   title="Edit expense"
                 >
-                  ✏️
+                  <FiEdit2 />
                 </button>
 
                 {!transaction.category && (
@@ -332,7 +335,7 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
                       }
                     }}
                   >
-                    <option value="">Categorize →</option>
+                    <option value=""><FiTag /> Categorize →</option>
                     <option value="Food">🍔 Food</option>
                     <option value="Transport">🚗 Transport</option>
                     <option value="Rent">🏠 Rent</option>
@@ -352,7 +355,7 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
                   onClick={() => handleDelete(transaction.id)}
                   title="Delete expense"
                 >
-                  ✕
+                  <FiTrash2 />
                 </button>
               </div>
             </div>
@@ -364,13 +367,13 @@ export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange p
       {uncategorized.length > 0 && (
         <div className="uncategorized-summary">
           <div className="summary-header">
-            <span>📋 You have {uncategorized.length} uncategorized transactions</span>
+            <span><FiAlertCircle /> You have {uncategorized.length} uncategorized transactions</span>
             <span className="summary-amount">
-              Total: {user?.currency || 'KES'} {uncategorized.reduce((sum, t) => sum + parseFloat(t.amount), 0).toFixed(2)}
+              <FiDollarSign /> Total: {user?.currency || 'KES'} {uncategorized.reduce((sum, t) => sum + parseFloat(t.amount), 0).toFixed(2)}
             </span>
           </div>
           <p className="summary-hint">
-            💡 Click the dropdown on each transaction to categorize it
+            <FiTag /> Click the dropdown on each transaction to categorize it
           </p>
         </div>
       )}

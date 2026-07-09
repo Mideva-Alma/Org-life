@@ -1,6 +1,11 @@
 // frontend/src/pages/auth.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  FiArrowLeft, FiUser, FiLock, FiMail, FiPhone, FiCheck, 
+  FiAlertCircle, FiAnchor, FiLogIn, FiUserPlus
+} from "react-icons/fi";
+import { FaAnchor } from "react-icons/fa";
 import api from "../services/api";
 import VerificationModal from "../components/VerificationModal";
 import ForgotPasswordModal from "../components/ForgotPasswordModal";
@@ -119,49 +124,38 @@ export default function Auth() {
   }
 
   async function signIn() {
-  const errors = validateSignIn();
-  if (errors.length > 0) {
-    setValidationErrors(errors);
-    return;
-  }
-
-  setLoading(true);
-  setError("");
-  setValidationErrors([]);
-
-  try {
-    const response = await api.signIn({
-      email: email.trim(),
-      password
-    });
-
-    console.log("🔍 SIGNIN RESPONSE - FULL:", response);
-    console.log("🔍 SIGNIN RESPONSE - ROLE:", response.budgeter?.role);
-    console.log("🔍 SIGNIN RESPONSE - budgeter:", response.budgeter);
-
-    localStorage.setItem('token', response.token);
-    localStorage.setItem('role', response.budgeter.role);
-    localStorage.setItem('email', response.budgeter.email);
-    
-    console.log("🔍 STORED ROLE:", localStorage.getItem('role'));
-    console.log("🔍 STORED TOKEN:", localStorage.getItem('token') ? 'exists' : 'none');
-
-    // ✅ FORCE ADMIN NAVIGATION FOR TESTING
-    // If role is admin OR if email is admin@gmail.com
-    if (response.budgeter.role === 'admin' || email.trim() === 'admin@gmail.com') {
-      console.log("🔍 NAVIGATING TO /admin");
-      navigate('/admin');
-    } else {
-      console.log("🔍 NAVIGATING TO /dashboard");
-      navigate('/dashboard');
+    const errors = validateSignIn();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
     }
-  } catch (error) {
-    console.error("🔍 SIGNIN ERROR:", error);
-    setError(error.message);
-  } finally {
-    setLoading(false);
+
+    setLoading(true);
+    setError("");
+    setValidationErrors([]);
+
+    try {
+      const response = await api.signIn({
+        email: email.trim(),
+        password
+      });
+
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('role', response.budgeter.role);
+      localStorage.setItem('email', response.budgeter.email);
+
+      if (response.budgeter.role === 'admin' || email.trim() === 'admin@gmail.com') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error("🔍 SIGNIN ERROR:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   const handleVerificationSkip = () => {
     setShowVerificationModal(false);
@@ -187,10 +181,10 @@ export default function Auth() {
     <div className="auth-container">
       <div className="auth-card">
         <button className="back-button" onClick={() => navigate("/")}>
-          ← Back
+          <FiArrowLeft /> Back
         </button>
 
-        <h1 className="auth-title">⚓ Org-Life</h1>
+        <h1 className="auth-title"><FaAnchor /> Org-Life</h1>
         
         {!isSignUp && (
           <div className="auth-tabs">
@@ -198,13 +192,13 @@ export default function Auth() {
               className={`auth-tab ${loginMode === 'user' ? 'active' : ''}`}
               onClick={() => switchLoginMode('user')}
             >
-              👤 User
+              <FiUser /> User
             </button>
             <button 
               className={`auth-tab ${loginMode === 'admin' ? 'active' : ''}`}
               onClick={() => switchLoginMode('admin')}
             >
-              🔐 Admin
+              <FiLock /> Admin
             </button>
           </div>
         )}
@@ -214,12 +208,12 @@ export default function Auth() {
         </p>
 
         {error && (
-          <div className="auth-error">⚠️ {error}</div>
+          <div className="auth-error"><FiAlertCircle /> {error}</div>
         )}
 
         {validationErrors.length > 0 && (
           <div className="validation-errors">
-            <p className="validation-title">⚠️ Please fix:</p>
+            <p className="validation-title"><FiAlertCircle /> Please fix:</p>
             <ul className="validation-list">
               {validationErrors.map((err, index) => (
                 <li key={index}>{err}</li>
@@ -287,7 +281,7 @@ export default function Auth() {
                   onChange={(e) => setAcceptTerms(e.target.checked)}
                   disabled={loading}
                 />
-                I accept the Terms & Conditions
+                <FiCheck /> I accept the Terms & Conditions
               </label>
             </div>
           </>
@@ -299,7 +293,7 @@ export default function Auth() {
             onClick={isSignUp ? signUp : signIn}
             disabled={loading}
           >
-            {loading ? "Processing..." : (isSignUp ? "Sign Up" : "Sign In")}
+            {loading ? "Processing..." : (isSignUp ? <><FiUserPlus /> Sign Up</> : <><FiLogIn /> Sign In</>)}
           </button>
         </div>
 
@@ -310,7 +304,7 @@ export default function Auth() {
                 className="link-button forgot-password" 
                 onClick={handleForgotPassword}
               >
-                Forgot Password?
+                <FiLock /> Forgot Password?
               </button>
             </div>
             <div className="auth-divider">

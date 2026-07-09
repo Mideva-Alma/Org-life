@@ -283,6 +283,529 @@
   border-color: #1a2a3a;
 }
 
+/* Filter bar improvements */
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.filter-icon {
+  color: #4a5a6a;
+  font-size: 14px;
+}
+
+.filter-clear-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: #1a2a3a;
+  color: #f5f0eb;
+  border: 2px solid #1a2a3a;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.filter-clear-btn:hover {
+  background: #2a4a6a;
+  border-color: #2a4a6a;
+}
+
+/* Table improvements */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-icon {
+  font-size: 18px;
+  color: #4a5a6a;
+}
+
+.user-email {
+  font-size: 11px;
+  color: #4a5a6a;
+  display: block;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f5f0eb;
+  padding: 2px 10px;
+  border: 1px solid #d4c8bc;
+  font-size: 12px;
+}
+
+.amount-cell {
+  font-weight: bold;
+}
+
+.amount-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.income-amount {
+  color: #2a6a4a;
+}
+
+.expense-amount {
+  color: #c44a3a;
+}
+
+.description-cell {
+  max-width: 150px;
+}
+
+.description-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+}
+
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f5f0eb;
+  padding: 2px 10px;
+  border: 1px solid #d4c8bc;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+}
+
+.type-icon {
+  font-size: 14px;
+}
+
+.income-icon {
+  color: #2a6a4a;
+}
+
+.expense-icon {
+  color: #c44a3a;
+}
+
+/* Loading state */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  font-family: 'Courier New', monospace;
+  color: #4a5a6a;
+}
+
+.table-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.table-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #4a5a6a;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid #d4c8bc;
+  padding: 4px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: #4a5a6a;
+}
+
+.refresh-btn:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+/* Pagination */
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: #f5f0eb;
+  border: 1px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: #1a2a3a;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #e8e0d8;
+  border-color: #1a2a3a;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+}
+
+/* Date input */
+.date-input {
+  width: 130px;
+}
+
+/* Empty state */
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 8px;
+}
+
+.empty-icon {
+  font-size: 40px;
+  color: #d4c8bc;
+}
+
+.empty-hint {
+  font-size: 13px;
+  color: #b4a89c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-group {
+    flex-wrap: wrap;
+  }
+  
+  .date-input {
+    width: 100px;
+  }
+  
+  .table-header-info {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  
+  .user-cell {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Success message */
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e6f4ea;
+  border: 2px solid #2a6a4a;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #1a4a3a;
+}
+
+/* Error message */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fcf0ec;
+  border: 2px solid #c44a3a;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #8a2a1a;
+}
+
+/* Email cell */
+.email-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.email-icon,
+.phone-icon {
+  font-size: 14px;
+  color: #4a5a6a;
+}
+
+/* Role icons */
+.role-icon {
+  font-size: 14px;
+}
+
+/* Verified icons */
+.verified-icon {
+  color: #2a6a4a;
+  font-size: 16px;
+}
+
+.unverified-icon {
+  color: #c44a3a;
+  font-size: 16px;
+}
+
+/* Status icons */
+.active-icon {
+  color: #2a6a4a;
+  font-size: 14px;
+}
+
+.inactive-icon {
+  color: #c44a3a;
+  font-size: 14px;
+}
+
+/* User cell in table */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-icon {
+  font-size: 20px;
+  color: #4a5a6a;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+/* Action buttons with icons */
+.btn-verify {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: #2a6a4a;
+  color: white;
+  border: 1px solid #2a6a4a;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-verify:hover {
+  background: #1a4a3a;
+  border-color: #1a4a3a;
+}
+
+.btn-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+
+.btn-toggle.deactivate {
+  background: #c44a3a;
+  color: white;
+  border: 1px solid #c44a3a;
+}
+
+.btn-toggle.deactivate:hover {
+  background: #8a2a1a;
+  border-color: #8a2a1a;
+}
+
+.btn-toggle.activate {
+  background: #2a6a4a;
+  color: white;
+  border: 1px solid #2a6a4a;
+}
+
+.btn-toggle.activate:hover {
+  background: #1a4a3a;
+  border-color: #1a4a3a;
+}
+
+/* Role badges with icons */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  border-radius: 4px;
+}
+
+.role-badge.admin {
+  background: #1a2a3a;
+  color: #f5f0eb;
+  border: 1px solid #1a2a3a;
+}
+
+.role-badge.user {
+  background: #f5f0eb;
+  color: #4a5a6a;
+  border: 1px solid #d4c8bc;
+}
+
+/* Verified badges */
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  border-radius: 4px;
+}
+
+.verified-badge.verified {
+  background: #e6f4ea;
+  color: #2a6a4a;
+  border: 1px solid #2a6a4a;
+}
+
+.verified-badge.unverified {
+  background: #fcf0ec;
+  color: #8a2a1a;
+  border: 1px solid #c44a3a;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  border-radius: 4px;
+}
+
+.status-badge.active {
+  background: #e6f4ea;
+  color: #2a6a4a;
+  border: 1px solid #2a6a4a;
+}
+
+.status-badge.inactive {
+  background: #fcf0ec;
+  color: #8a2a1a;
+  border: 1px solid #c44a3a;
+}
+
+/* Action buttons container */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-small.danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: #c44a3a;
+  color: white;
+  border: 1px solid #c44a3a;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-small.danger:hover {
+  background: #8a2a1a;
+  border-color: #8a2a1a;
+}
+
+/* Empty content */
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 8px;
+}
+
+.empty-icon {
+  font-size: 40px;
+  color: #d4c8bc;
+}
+
+.empty-hint {
+  font-size: 13px;
+  color: #b4a89c;
+}
+
+/* Pagination info with icon */
+.pagination-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .btn-verify,
+  .btn-toggle,
+  .btn-small.danger {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+  
+  .email-cell,
+  .user-cell {
+    flex-wrap: wrap;
+  }
+}
+
 /* Error message */
 .error-message {
   background: #fcf0ec;

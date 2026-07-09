@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FiHome, FiUsers, FiDollarSign, FiLogOut } from "react-icons/fi";
 import { FaChartBar } from "react-icons/fa";
 import api from "../services/api";
-import "../pages/admin.css";
+import "../pages/Admin.css";
 
 export default function AdminLayout({ children, title, subtitle }) {
   const navigate = useNavigate();

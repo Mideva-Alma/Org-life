@@ -1,5 +1,13 @@
+// frontend/src/pages/Profile.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  FiUser, FiLock, FiSettings, FiMessageSquare, FiCamera, 
+  FiSave, FiKey, FiTrash2, FiMoon, FiSun, FiBell, FiStar,
+  FiMail, FiPhone, FiDollarSign, FiAlertTriangle, FiSend,
+  FiEdit2, FiLogOut, FiChevronRight, FiCheck, FiX
+} from "react-icons/fi";
+import { FaUserCircle, FaCrown } from "react-icons/fa";
 import api from "../services/api";
 import "./Profile.css";
 
@@ -10,7 +18,6 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   
-  // Form states
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -18,21 +25,18 @@ export default function Profile() {
     currency: 'KES'
   });
   
-  // Password change states
   const [passwordData, setPasswordData] = useState({
     current_password: '',
     new_password: '',
     confirm_password: ''
   });
   
-  // Feedback state
   const [feedback, setFeedback] = useState({
     subject: '',
     message: '',
     rating: 0
   });
   
-  // Theme state
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('orglife_theme') || 'light';
   });
@@ -45,7 +49,6 @@ export default function Profile() {
     fetchUserProfile();
   }, []);
 
-  // Apply theme on load
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('orglife_theme', theme);
@@ -71,22 +74,14 @@ export default function Profile() {
     }
   }
 
-  // Update profile
   async function handleUpdateProfile(e) {
     e.preventDefault();
     setSaving(true);
     setMessage({ text: '', type: '' });
 
     try {
-      // Update user via API (you'll need to add this endpoint)
-      // For now, we'll just show a success message
-      // await api.updateProfile(formData);
-      
-      // Update local state
       setUser({ ...user, ...formData });
       setMessage({ text: '✅ Profile updated successfully!', type: 'success' });
-      
-      // Clear message after 3 seconds
       setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     } catch (error) {
       setMessage({ text: '❌ Failed to update profile: ' + error.message, type: 'error' });
@@ -95,7 +90,6 @@ export default function Profile() {
     }
   }
 
-  // Change password
   async function handleChangePassword(e) {
     e.preventDefault();
     setSaving(true);
@@ -114,10 +108,8 @@ export default function Profile() {
     }
 
     try {
-      // await api.changePassword(passwordData);
       setMessage({ text: '✅ Password changed successfully!', type: 'success' });
       setPasswordData({ current_password: '', new_password: '', confirm_password: '' });
-      
       setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     } catch (error) {
       setMessage({ text: '❌ Failed to change password: ' + error.message, type: 'error' });
@@ -126,7 +118,6 @@ export default function Profile() {
     }
   }
 
-  // Submit feedback
   async function handleSubmitFeedback(e) {
     e.preventDefault();
     setSaving(true);
@@ -139,10 +130,8 @@ export default function Profile() {
     }
 
     try {
-      // await api.submitFeedback(feedback);
       setMessage({ text: '✅ Thank you for your feedback!', type: 'success' });
       setFeedback({ subject: '', message: '', rating: 0 });
-      
       setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     } catch (error) {
       setMessage({ text: '❌ Failed to submit feedback: ' + error.message, type: 'error' });
@@ -151,7 +140,6 @@ export default function Profile() {
     }
   }
 
-  // Handle avatar upload
   function handleAvatarClick() {
     fileInputRef.current.click();
   }
@@ -167,12 +155,10 @@ export default function Profile() {
     }
   }
 
-  // Toggle theme
   function toggleTheme() {
     setTheme(theme === 'light' ? 'dark' : 'light');
   }
 
-  // Render stars for rating
   function renderStars(rating, setter) {
     return (
       <div className="stars-container">
@@ -202,7 +188,7 @@ export default function Profile() {
     <div className="profile-page">
       {/* Header */}
       <div className="profile-header">
-        <h1 className="profile-title">👤 Profile Settings</h1>
+        <h1 className="profile-title"><FiUser /> Profile Settings</h1>
         <p className="profile-subtitle">Manage your account and preferences</p>
       </div>
 
@@ -219,25 +205,25 @@ export default function Profile() {
           className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
           onClick={() => setActiveTab('profile')}
         >
-          👤 Profile
+          <FiUser /> Profile
         </button>
         <button
           className={`tab-btn ${activeTab === 'security' ? 'active' : ''}`}
           onClick={() => setActiveTab('security')}
         >
-          🔒 Security
+          <FiLock /> Security
         </button>
         <button
           className={`tab-btn ${activeTab === 'preferences' ? 'active' : ''}`}
           onClick={() => setActiveTab('preferences')}
         >
-          ⚙️ Preferences
+          <FiSettings /> Preferences
         </button>
         <button
           className={`tab-btn ${activeTab === 'feedback' ? 'active' : ''}`}
           onClick={() => setActiveTab('feedback')}
         >
-          💬 Feedback
+          <FiMessageSquare /> Feedback
         </button>
       </div>
 
@@ -255,7 +241,7 @@ export default function Profile() {
                 </div>
               )}
               <div className="avatar-overlay">
-                <span>📷</span>
+                <FiCamera />
               </div>
             </div>
             <input
@@ -265,13 +251,13 @@ export default function Profile() {
               accept="image/*"
               style={{ display: 'none' }}
             />
-            <p className="avatar-hint">Click to upload a profile picture</p>
+            <p className="avatar-hint"><FiCamera /> Click to upload a profile picture</p>
           </div>
 
           {/* Profile Form */}
           <form className="profile-form" onSubmit={handleUpdateProfile}>
             <div className="form-group">
-              <label>Full Name</label>
+              <label><FiUser /> Full Name</label>
               <input
                 type="text"
                 value={formData.full_name}
@@ -281,7 +267,7 @@ export default function Profile() {
             </div>
 
             <div className="form-group">
-              <label>Email Address</label>
+              <label><FiMail /> Email Address</label>
               <input
                 type="email"
                 value={formData.email}
@@ -291,7 +277,7 @@ export default function Profile() {
             </div>
 
             <div className="form-group">
-              <label>Phone Number</label>
+              <label><FiPhone /> Phone Number</label>
               <input
                 type="tel"
                 value={formData.phone_number}
@@ -301,7 +287,7 @@ export default function Profile() {
             </div>
 
             <div className="form-group">
-              <label>Currency</label>
+              <label><FiDollarSign /> Currency</label>
               <select
                 value={formData.currency}
                 onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
@@ -316,7 +302,7 @@ export default function Profile() {
             </div>
 
             <button type="submit" className="save-btn" disabled={saving}>
-              {saving ? 'Saving...' : '💾 Save Changes'}
+              <FiSave /> {saving ? 'Saving...' : 'Save Changes'}
             </button>
           </form>
         </div>
@@ -325,11 +311,11 @@ export default function Profile() {
       {/* ===== SECURITY TAB ===== */}
       {activeTab === 'security' && (
         <div className="profile-section">
-          <h2 className="section-title">🔒 Change Password</h2>
+          <h2 className="section-title"><FiLock /> Change Password</h2>
           
           <form className="profile-form" onSubmit={handleChangePassword}>
             <div className="form-group">
-              <label>Current Password</label>
+              <label><FiKey /> Current Password</label>
               <input
                 type="password"
                 value={passwordData.current_password}
@@ -339,7 +325,7 @@ export default function Profile() {
             </div>
 
             <div className="form-group">
-              <label>New Password</label>
+              <label><FiLock /> New Password</label>
               <input
                 type="password"
                 value={passwordData.new_password}
@@ -351,7 +337,7 @@ export default function Profile() {
             </div>
 
             <div className="form-group">
-              <label>Confirm New Password</label>
+              <label><FiCheck /> Confirm New Password</label>
               <input
                 type="password"
                 value={passwordData.confirm_password}
@@ -361,14 +347,14 @@ export default function Profile() {
             </div>
 
             <button type="submit" className="save-btn" disabled={saving}>
-              {saving ? 'Changing...' : '🔑 Change Password'}
+              <FiLock /> {saving ? 'Changing...' : 'Change Password'}
             </button>
           </form>
 
-          {/* Account Actions */}
+          {/* Danger Zone */}
           <div className="danger-zone">
-            <h3>⚠️ Danger Zone</h3>
-            <button className="danger-btn">🗑️ Delete Account</button>
+            <h3><FiAlertTriangle /> Danger Zone</h3>
+            <button className="danger-btn"><FiTrash2 /> Delete Account</button>
           </div>
         </div>
       )}
@@ -376,26 +362,27 @@ export default function Profile() {
       {/* ===== PREFERENCES TAB ===== */}
       {activeTab === 'preferences' && (
         <div className="profile-section">
-          <h2 className="section-title">⚙️ Preferences</h2>
+          <h2 className="section-title"><FiSettings /> Preferences</h2>
 
           {/* Theme */}
           <div className="preference-item">
             <div className="preference-info">
-              <span className="preference-icon">🌓</span>
+              <span className="preference-icon">{theme === 'light' ? <FiSun /> : <FiMoon />}</span>
               <div>
                 <h4>Theme</h4>
                 <p>Switch between light and dark mode</p>
               </div>
             </div>
             <button className={`theme-toggle ${theme}`} onClick={toggleTheme}>
-              {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
+              {theme === 'light' ? <FiMoon /> : <FiSun />}
+              {theme === 'light' ? ' Dark' : ' Light'}
             </button>
           </div>
 
           {/* Currency */}
           <div className="preference-item">
             <div className="preference-info">
-              <span className="preference-icon">💰</span>
+              <span className="preference-icon"><FiDollarSign /></span>
               <div>
                 <h4>Default Currency</h4>
                 <p>Set your preferred currency for all transactions</p>
@@ -406,7 +393,6 @@ export default function Profile() {
               value={formData.currency}
               onChange={(e) => {
                 setFormData({ ...formData, currency: e.target.value });
-                // Auto-save currency preference
               }}
             >
               <option value="KES">KES</option>
@@ -419,7 +405,7 @@ export default function Profile() {
           {/* Notifications */}
           <div className="preference-item">
             <div className="preference-info">
-              <span className="preference-icon">🔔</span>
+              <span className="preference-icon"><FiBell /></span>
               <div>
                 <h4>Notifications</h4>
                 <p>Receive email alerts for important updates</p>
@@ -436,17 +422,17 @@ export default function Profile() {
       {/* ===== FEEDBACK TAB ===== */}
       {activeTab === 'feedback' && (
         <div className="profile-section">
-          <h2 className="section-title">💬 Feedback</h2>
+          <h2 className="section-title"><FiMessageSquare /> Feedback</h2>
           <p className="feedback-subtitle">We'd love to hear from you!</p>
 
           <form className="profile-form" onSubmit={handleSubmitFeedback}>
             <div className="form-group">
-              <label>Rating</label>
+              <label><FiStar /> Rating</label>
               {renderStars(feedback.rating, setFeedback)}
             </div>
 
             <div className="form-group">
-              <label>Subject</label>
+              <label><FiEdit2 /> Subject</label>
               <input
                 type="text"
                 placeholder="What's this about?"
@@ -457,7 +443,7 @@ export default function Profile() {
             </div>
 
             <div className="form-group">
-              <label>Message</label>
+              <label><FiMessageSquare /> Message</label>
               <textarea
                 rows="5"
                 placeholder="Tell us what you think..."
@@ -468,18 +454,18 @@ export default function Profile() {
             </div>
 
             <button type="submit" className="save-btn" disabled={saving}>
-              {saving ? 'Sending...' : '📤 Send Feedback'}
+              <FiSend /> {saving ? 'Sending...' : 'Send Feedback'}
             </button>
           </form>
 
           {/* Quick Stats */}
           <div className="feedback-stats">
             <div className="stat-item">
-              <span className="stat-number">⭐ 4.8</span>
+              <span className="stat-number"><FiStar /> 4.8</span>
               <span className="stat-label">Average Rating</span>
             </div>
             <div className="stat-item">
-              <span className="stat-number">💬 24</span>
+              <span className="stat-number"><FiMessageSquare /> 24</span>
               <span className="stat-label">Total Feedback</span>
             </div>
           </div>
